@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "golang.Go",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "usernamehw.errorlens",
+        "shardulm94.trailing-spaces",
+        "42crunch.vscode-openapi",
+        "arjun.swagger-viewer",
+        "editorconfig.editorconfig"
+    ]
+}
