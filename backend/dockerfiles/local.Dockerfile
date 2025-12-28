@@ -14,13 +14,9 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY ./entrypoint.sh /app/entrypoint.sh
-COPY ./mockData.sql /app/mockData.sql
 COPY . .
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 8080
-
-CMD ["air", "-c", ".air.toml"]
