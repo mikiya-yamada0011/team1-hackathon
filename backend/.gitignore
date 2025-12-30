@@ -16,3 +16,6 @@ coverage.txt
 
 # 環境変数ファイル
 .env.local
+
+# Airのビルド成果物
+/tmp

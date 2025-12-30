@@ -9,7 +9,6 @@ import (
 )
 
 // 設定を読み込むインターフェース
-// このインターフェースを実装することで、異なる読み込み方法（YAML、JSON、DBなど）を切り替えられる
 type ConfigLoader interface {
 	LoadWithEnv(path string) (*Config, error)
 }
@@ -37,28 +36,30 @@ func (l *YAMLConfigLoader) load(path string) (*Config, error) {
 
 // 環境変数による上書きを含めて設定を読み込む
 func (l *YAMLConfigLoader) LoadWithEnv(path string) (*Config, error) {
-	config := &Config{}
+	var config *Config
 
-	// YAMLファイルが存在すれば読み込む
+	// YAMLファイルが存在すれば読み込む（オプション）
 	if _, err := os.Stat(path); err == nil {
-		config, err = l.load(path)
+		yamlConfig, err := l.load(path)
 		if err == nil {
+			config = yamlConfig
 			slog.Debug("YAMLファイルを読み込みました", "path", path)
 		} else {
-			slog.Warn("YAMLファイルの読み込みに失敗しましたが、環境変数で設定します", "error", err, "path", path)
+			slog.Warn("YAMLファイルの読み込みに失敗しました", "error", err, "path", path)
 			config = &Config{}
 		}
 	} else {
-		slog.Info("YAMLファイルが見つかりません。環境変数とデフォルト値で設定します", "path", path)
+		slog.Info("YAMLファイルが見つかりません。環境変数で設定します", "path", path)
+		config = &Config{}
 	}
 
-	// 環境変数で設定・上書き
+	// 環境変数で上書き（環境変数が設定されている項目のみ）
 	if err := env.Parse(config); err != nil {
 		slog.Error("環境変数のパースに失敗しました", "error", err)
 		return nil, err
 	}
 
-	slog.Debug("環境変数による設定の上書きを完了しました")
+	slog.Debug("設定の読み込みが完了しました")
 
 	return config, nil
 }
