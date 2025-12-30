@@ -4,47 +4,40 @@
 
 ### 開発環境
 
-Docker Composeを使用して起動します。
+1. 設定ファイルを作成：
+
+```bash
+cp config/config.yaml.example config/config.yaml
+```
+
+2. Docker Composeで起動：
 
 ```bash
 docker compose up --build
 ```
 
-`.env`ファイルに開発環境用のPostgreSQL設定が含まれています。
+データベースのマイグレーションは自動実行されます。
 
-デフォルトで以下の設定が使用されます：
-- Database Host: `db`
-- Database Port: `5432`
-- Database User: `myuser`
-- Database Password: `mypassword`
-- Database Name: `mydb`
-- Server Port: `8080`
+### デフォルト設定
+
+- API: http://localhost:8080
+- Swagger UI: http://localhost:80
+- PostgreSQL: `myuser/mypassword@db:5432/mydb`
 
 ### 設定のカスタマイズ
 
-アプリケーションの設定を変更したい場合は、環境変数で上書きできます：
+`config/config.yaml`を編集するか、環境変数で上書きできます（環境変数が優先されます）：
 
 ```bash
-export DATABASE_HOST=localhost
+export DATABASE_HOST=db
 export DATABASE_PORT=5432
-export DATABASE_USER=custom_user
-export DATABASE_PASSWORD=custom_password
-export DATABASE_NAME=custom_db
 export SERVER_PORT=8080
 ```
 
-PostgreSQLの設定を変更する場合は、`.env`ファイルを編集してください。
-
-### マイグレーション
-
-アプリケーション起動時に自動的にマイグレーションが実行されます。
-
 ## API仕様
 
-Swagger UIは以下のURLで確認できます：
-- http://localhost:80
+Swagger UI: http://localhost:80
 
 ## 本番環境
 
-本番環境では、環境変数や機密情報管理システムを使用して設定を管理してください。
-`.env`ファイルに記載されている認証情報は開発環境専用です。
+本番環境では環境変数で設定を管理してください。
