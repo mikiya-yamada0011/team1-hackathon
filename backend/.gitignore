@@ -19,3 +19,4 @@ coverage.txt
 
 # Airのビルド成果物
 /tmp
+.env
