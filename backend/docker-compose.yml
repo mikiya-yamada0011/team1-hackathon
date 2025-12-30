@@ -5,19 +5,21 @@ services:
       dockerfile: dockerfiles/local.Dockerfile
     ports:
       - "8080:8080"
-    container_name: mobileorder
     depends_on:
-      - db
-    env_file:
-      - .env
+      db:
+        condition: service_healthy
     volumes:
       - .:/app
 
   db:
     image: postgres:18
-    container_name: postgres-db
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
     volumes:
@@ -29,11 +31,8 @@ services:
     ports:
       - "80:8080"
     volumes:
-      # swagger.jsonをコンテナ内の一時的なパスにマウントします
       - ./docs/swagger.json:/app/swagger.json
     environment:
-      # 一時的なパスを環境変数で指定します
-      # これにより、コンテナの起動スクリプトがファイルを適切な場所にコピーします
       - SWAGGER_JSON=/app/swagger.json
     depends_on:
       - app
