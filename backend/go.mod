@@ -5,7 +5,6 @@ go 1.25.5
 require (
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
-	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.14.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.6.0
