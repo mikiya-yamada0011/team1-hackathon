@@ -1,16 +1,14 @@
-# Gitコミットをする直前(pre-commit)に実行する
 pre-commit:
   commands:
-    # 好きな名前（ここでは biome-check としました）
-    biome-check:
-      # チェック対象のファイル（JS, TS, JSONなど）
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+    frontend-biome:
+      # ① frontendフォルダ配下のファイルだけを監視対象にする
+      glob: "frontend/**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
 
-      # ① Biomeを実行するコマンド
-      # --write: 修正できるものは自動修正する
-      # --no-errors-on-unmatched: 対象ファイルが0個でもエラーにしない
-      # {staged_files}: コミットしようとしているファイルだけを対象にする
+      # ② コマンドを実行する場所（カレントディレクトリ）を frontend にする
+      root: "frontend/"
+
+      # ③ 実行コマンド（中身はさっきと同じ）
+      # {staged_files} はルートからのパスで渡されるので Biome は正しく処理できます
       run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
 
-      # ② 修正されたファイルを自動で git add する（重要！）
       stage_fixed: true
