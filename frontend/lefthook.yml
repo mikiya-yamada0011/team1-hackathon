@@ -1,0 +1,16 @@
+# Gitコミットをする直前(pre-commit)に実行する
+pre-commit:
+  commands:
+    # 好きな名前（ここでは biome-check としました）
+    biome-check:
+      # チェック対象のファイル（JS, TS, JSONなど）
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+
+      # ① Biomeを実行するコマンド
+      # --write: 修正できるものは自動修正する
+      # --no-errors-on-unmatched: 対象ファイルが0個でもエラーにしない
+      # {staged_files}: コミットしようとしているファイルだけを対象にする
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+
+      # ② 修正されたファイルを自動で git add する（重要！）
+      stage_fixed: true
