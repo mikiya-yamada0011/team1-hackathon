@@ -13,7 +13,21 @@ import (
 	"github.com/yamada-mikiya/team1-hackathon/api"
 	"github.com/yamada-mikiya/team1-hackathon/config"
 	"github.com/yamada-mikiya/team1-hackathon/database"
+	_ "github.com/yamada-mikiya/team1-hackathon/docs"
 )
+
+// @title        Team1 Blog API
+// @version      1.0
+// @description  チーム1のテックブログシステムのためのAPI仕様書です。
+// @description  記事の取得、閲覧などの機能を提供します。
+
+// @host         localhost:8080
+// @BasePath     /
+
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description 認証トークンを'Bearer 'に続けて入力してください。 (例: Bearer {JWTトークン})
 
 func main() {
 	os.Exit(realMain())
@@ -41,7 +55,14 @@ func realMain() int {
 	}
 	defer database.Close(db)
 
-	router := api.SetupRouter(cfg)
+	// 設定でseedDatabaseが有効な場合、テストデータを挿入
+	if cfg.Database.SeedDatabase {
+		if err := database.SeedDatabase(db); err != nil {
+			slog.Warn("シードデータの挿入中に警告が発生しました", "error", err)
+		}
+	}
+
+	router := api.SetupRouter(cfg, db)
 
 	// サーバー設定
 	srv := &http.Server{

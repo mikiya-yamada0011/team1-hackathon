@@ -34,3 +34,57 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 🔄 API型の自動生成
+
+### バックエンドから型を生成する方法
+
+1. バックエンドディレクトリで型生成スクリプトを実行:
+```bash
+cd ../backend
+./scripts/generate-frontend-types.sh
+```
+
+または個別のコマンドで:
+```bash
+cd ../backend
+
+# Swaggerドキュメントを生成
+swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal
+
+# OpenAPIスキーマをコピー
+cp docs/swagger.json ../frontend/src/generated/openapi.json
+
+# TypeScript型を生成
+cd ../frontend
+pnpm exec swagger-typescript-api generate -p src/generated/openapi.json -o src/generated --modular --axios
+```
+
+### 生成されるファイル
+
+- `src/generated/data-contracts.ts` - 型定義
+- `src/generated/Api.ts` - APIクライアント
+- `src/generated/http-client.ts` - HTTPクライアント
+- `src/generated/openapi.json` - OpenAPIスキーマ
+
+### APIクライアントの使い方
+
+```typescript
+import { Api } from '@/generated/Api';
+import type { ArticleListResponse } from '@/generated/data-contracts';
+
+const api = new Api({
+  baseURL: 'http://localhost:8080',
+});
+
+// 記事一覧を取得
+const articles = await api.api.listArticles({ 
+  page: 1, 
+  limit: 10 
+});
+
+// 記事詳細を取得
+const article = await api.api.detailArticles('article-slug');
+```
+
+詳細な使用例は `src/lib/api-client.example.ts` を参照してください。

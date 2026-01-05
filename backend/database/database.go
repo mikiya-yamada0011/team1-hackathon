@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -82,5 +83,26 @@ func RunMigrations(databaseURL string) error {
 	}
 
 	slog.Info("マイグレーションが正常に終了しました")
+	return nil
+}
+
+// SeedDatabase は開発環境用のテストデータを挿入
+func SeedDatabase(db *gorm.DB) error {
+	slog.Info("シードデータの挿入を開始します")
+
+	// seed.sqlファイルを読み込む
+	sqlBytes, err := os.ReadFile("db/seed.sql")
+	if err != nil {
+		slog.Warn("シードデータファイルが見つかりません", "error", err)
+		return nil // エラーにせず警告のみ
+	}
+
+	// SQLを実行
+	if err := db.Exec(string(sqlBytes)).Error; err != nil {
+		slog.Error("シードデータの挿入に失敗しました", "error", err)
+		return fmt.Errorf("シードデータ挿入失敗: %w", err)
+	}
+
+	slog.Info("シードデータの挿入が完了しました")
 	return nil
 }

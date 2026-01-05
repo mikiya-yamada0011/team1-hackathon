@@ -1,0 +1,237 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "チーム1のテックブログシステムのためのAPI仕様書です。\n記事の取得、閲覧などの機能を提供します。",
+    "title": "Team1 Blog API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "paths": {
+    "/api/articles": {
+      "get": {
+        "description": "公開されているブログ記事の一覧を取得します。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["記事 (Articles)"],
+        "summary": "記事一覧を取得",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "ページ番号 (デフォルト: 1)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "1ページあたりの件数 (デフォルト: 10, 最大: 100)",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "enum": ["Dev", "MKT", "Ops"],
+            "type": "string",
+            "description": "部署でフィルタ (Dev, MKT, Ops)",
+            "name": "department",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "internal", "public"],
+            "type": "string",
+            "description": "ステータスでフィルタ (draft, internal, public)",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "記事一覧",
+            "schema": {
+              "$ref": "#/definitions/ArticleListResponse"
+            }
+          },
+          "400": {
+            "description": "リクエストパラメータが不正です",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "サーバー内部でエラーが発生しました",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/articles/{slug}": {
+      "get": {
+        "description": "指定されたslugのブログ記事の詳細を取得します。",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["記事 (Articles)"],
+        "summary": "記事詳細を取得",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "\"go-api-development\"",
+            "description": "記事のスラグ",
+            "name": "slug",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "記事詳細",
+            "schema": {
+              "$ref": "#/definitions/ArticleResponse"
+            }
+          },
+          "404": {
+            "description": "記事が見つかりません",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "サーバー内部でエラーが発生しました",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ArticleListResponse": {
+      "type": "object",
+      "properties": {
+        "articles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArticleResponse"
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "example": 10
+        },
+        "page": {
+          "type": "integer",
+          "example": 1
+        },
+        "total_count": {
+          "type": "integer",
+          "example": 100
+        },
+        "total_pages": {
+          "type": "integer",
+          "example": 10
+        }
+      }
+    },
+    "ArticleResponse": {
+      "type": "object",
+      "properties": {
+        "article_type": {
+          "type": "string",
+          "enum": ["markdown", "external"],
+          "example": "markdown"
+        },
+        "author": {
+          "$ref": "#/definitions/AuthorResponse"
+        },
+        "content": {
+          "type": "string",
+          "example": "記事の本文です..."
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-01-06T12:00:00Z"
+        },
+        "department": {
+          "type": "string",
+          "enum": ["Dev", "MKT", "Ops"],
+          "example": "Dev"
+        },
+        "external_url": {
+          "type": "string",
+          "example": "https://example.com/article"
+        },
+        "id": {
+          "type": "string",
+          "example": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "slug": {
+          "type": "string",
+          "example": "go-api-development"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "internal", "public"],
+          "example": "public"
+        },
+        "thumbnail_url": {
+          "type": "string",
+          "example": "https://example.com/thumbnail.jpg"
+        },
+        "title": {
+          "type": "string",
+          "example": "Go言語でのAPI開発入門"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-01-06T12:00:00Z"
+        }
+      }
+    },
+    "AuthorResponse": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string",
+          "example": "開発部"
+        },
+        "icon_url": {
+          "type": "string",
+          "example": "https://example.com/icon.jpg"
+        },
+        "id": {
+          "type": "string",
+          "example": "550e8400-e29b-41d4-a716-446655440001"
+        },
+        "name": {
+          "type": "string",
+          "example": "山田太郎"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "エラーメッセージ"
+        },
+        "message": {
+          "type": "string",
+          "example": "詳細なエラー情報"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "description": "認証トークンを'Bearer 'に続けて入力してください。 (例: Bearer {JWTトークン})",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

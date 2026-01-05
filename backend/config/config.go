@@ -21,11 +21,12 @@ type Config struct {
 }
 
 type DatabaseConfig struct {
-	Port     string `yaml:"port" env:"DATABASE_PORT"`
-	Host     string `yaml:"host" env:"DATABASE_HOST"`
-	User     string `yaml:"user" env:"DATABASE_USER"`
-	Password string `yaml:"password" env:"DATABASE_PASSWORD"`
-	Name     string `yaml:"name" env:"DATABASE_NAME"`
+        Port         string `yaml:"port" env:"DATABASE_PORT"`
+        Host         string `yaml:"host" env:"DATABASE_HOST"`
+        User         string `yaml:"user" env:"DATABASE_USER"`
+        Password     string `yaml:"password" env:"DATABASE_PASSWORD"`
+        Name         string `yaml:"name" env:"DATABASE_NAME"`
+        SeedDatabase bool   `yaml:"seedDatabase" env:"SEED_DATABASE"`
 }
 
 type ServerConfig struct {
