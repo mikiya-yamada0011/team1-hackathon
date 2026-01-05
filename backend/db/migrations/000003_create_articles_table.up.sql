@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS articles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY NOT NULL,
+    author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     article_type VARCHAR(50) NOT NULL CHECK (article_type IN ('markdown', 'external')),
     title VARCHAR(255) NOT NULL,
     content TEXT,

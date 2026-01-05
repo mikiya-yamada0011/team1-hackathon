@@ -18,7 +18,7 @@ export interface ArticleResponse {
   created_at?: string;
   department?: ArticleResponseDepartment;
   external_url?: string;
-  id?: string;
+  id?: number;
   slug?: string;
   status?: ArticleResponseStatus;
   thumbnail_url?: string;

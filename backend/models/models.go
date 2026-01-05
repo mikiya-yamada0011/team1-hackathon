@@ -4,8 +4,8 @@ import "time"
 
 // Article はブログ記事のモデル
 type Article struct {
-	ID           string    `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	AuthorID     string    `json:"author_id" gorm:"type:uuid;not null"`
+	ID           int       `json:"id" gorm:"primaryKey;autoIncrement"`
+	AuthorID     int       `json:"author_id" gorm:"not null"`
 	ArticleType  string    `json:"article_type" gorm:"type:varchar(50);not null"`
 	Title        string    `json:"title" gorm:"type:varchar(255);not null"`
 	Content      *string   `json:"content" gorm:"type:text"`
@@ -21,7 +21,7 @@ type Article struct {
 
 // User はユーザーのモデル
 type User struct {
-	ID           string    `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	ID           int       `json:"id" gorm:"primaryKey;autoIncrement"`
 	Name         string    `json:"name" gorm:"type:varchar(255);not null"`
 	Affiliation  *string   `json:"affiliation" gorm:"type:varchar(255)"`
 	PasswordHash string    `json:"-" gorm:"type:varchar(255);not null"`

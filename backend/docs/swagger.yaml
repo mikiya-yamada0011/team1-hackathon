@@ -46,8 +46,8 @@ definitions:
         example: https://example.com/article
         type: string
       id:
-        example: 550e8400-e29b-41d4-a716-446655440000
-        type: string
+        example: 1
+        type: integer
       slug:
         example: go-api-development
         type: string
@@ -77,8 +77,8 @@ definitions:
         example: https://example.com/icon.jpg
         type: string
       id:
-        example: 550e8400-e29b-41d4-a716-446655440001
-        type: string
+        example: 1
+        type: integer
       name:
         example: 山田太郎
         type: string

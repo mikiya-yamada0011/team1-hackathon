@@ -198,8 +198,8 @@ const docTemplate = `{
                     "example": "https://example.com/article"
                 },
                 "id": {
-                    "type": "string",
-                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                    "type": "integer",
+                    "example": 1
                 },
                 "slug": {
                     "type": "string",
@@ -240,8 +240,8 @@ const docTemplate = `{
                     "example": "https://example.com/icon.jpg"
                 },
                 "id": {
-                    "type": "string",
-                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
                     "type": "string",

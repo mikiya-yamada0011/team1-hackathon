@@ -10,6 +10,6 @@
 export interface AuthorResponse {
   affiliation?: string;
   icon_url?: string;
-  id?: string;
+  id?: number;
   name?: string;
 }
