@@ -8,6 +8,7 @@ database:
   password: "mypassword"
   name: "mydb"
   seedDatabase: true
+
 cors:
   allowedOrigins:
     - "http://localhost:3000"
