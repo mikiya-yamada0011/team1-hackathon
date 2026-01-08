@@ -25,6 +25,7 @@ type ArticleResponse struct {
 	Author       AuthorResponse `json:"author"`
 	CreatedAt    time.Time      `json:"created_at" example:"2026-01-06T12:00:00Z"`
 	UpdatedAt    time.Time      `json:"updated_at" example:"2026-01-06T12:00:00Z"`
+	Tags         []string       `json:"tags" example:"Go,Backend,Echo"`
 } // @name ArticleResponse
 
 // AuthorResponse は記事の著者情報

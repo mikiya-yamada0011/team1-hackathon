@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/yamada-mikiya/team1-hackathon/models"
 	"github.com/yamada-mikiya/team1-hackathon/repositories"
+	"errors"
 )
 
 type ArticleService interface {
@@ -29,30 +30,7 @@ func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, 
 	// レスポンスを構築
 	articleResponses := make([]models.ArticleResponse, len(articles))
 	for i, article := range articles {
-		authorResponse := models.AuthorResponse{}
-		if article.Author != nil {
-			authorResponse = models.AuthorResponse{
-				ID:          article.Author.ID,
-				Name:        article.Author.Name,
-				Affiliation: article.Author.Affiliation,
-				IconURL:     article.Author.IconURL,
-			}
-		}
-
-		articleResponses[i] = models.ArticleResponse{
-			ID:           article.ID,
-			Title:        article.Title,
-			ArticleType:  article.ArticleType,
-			Content:      article.Content,
-			ExternalURL:  article.ExternalURL,
-			ThumbnailURL: article.ThumbnailURL,
-			Slug:         article.Slug,
-			Department:   article.Department,
-			Status:       article.Status,
-			Author:       authorResponse,
-			CreatedAt:    article.CreatedAt,
-			UpdatedAt:    article.UpdatedAt,
-		}
+		articleResponses[i] = s.convertArticleToResponse(&article)
 	}
 
 	totalPages := int((totalCount + int64(limit) - 1) / int64(limit))
@@ -66,6 +44,7 @@ func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, 
 	}, nil
 }
 
+
 // GetArticleBySlug はslugを指定して記事を取得します
 func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error) {
 	article, err := s.repo.FindBySlug(slug, isAuthenticated)
@@ -73,7 +52,21 @@ func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*m
 		return nil, err
 	}
 
+	//データがnilだった場合のチェック
+	if article == nil {
+		return nil, errors.New("article not found")
+	}
+
+	res := s.convertArticleToResponse(article)
+	return &res, nil
+}
+
+// 共通の変換ロジック (Helper Method)
+// DBモデル(*models.Article)を受け取り、レスポンスモデル(models.ArticleResponse)を返す
+func (s *articleService) convertArticleToResponse(article *models.Article) models.ArticleResponse {
 	authorResponse := models.AuthorResponse{}
+
+	// Authorのnilチェックと詰め替え
 	if article.Author != nil {
 		authorResponse = models.AuthorResponse{
 			ID:          article.Author.ID,
@@ -83,7 +76,7 @@ func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*m
 		}
 	}
 
-	return &models.ArticleResponse{
+	return models.ArticleResponse{
 		ID:           article.ID,
 		Title:        article.Title,
 		ArticleType:  article.ArticleType,
@@ -96,5 +89,5 @@ func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*m
 		Author:       authorResponse,
 		CreatedAt:    article.CreatedAt,
 		UpdatedAt:    article.UpdatedAt,
-	}, nil
+	}
 }

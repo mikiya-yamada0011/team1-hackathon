@@ -1,6 +1,7 @@
 package controller
 
 import (
+
 	"net/http"
 	"strconv"
 
@@ -95,8 +96,8 @@ func (ac *ArticleController) GetArticleBySlug(c echo.Context) error {
 
 	response, err := ac.service.GetArticleBySlug(slug, isAuthenticated)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return c.JSON(http.StatusNotFound, models.ErrorResponse{
+			if err.Error() == "article not found" {
+				return c.JSON(http.StatusNotFound, models.ErrorResponse{
 				Error: "記事が見つかりません",
 			})
 		}
