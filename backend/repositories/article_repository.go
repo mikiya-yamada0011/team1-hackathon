@@ -60,8 +60,12 @@ func (r *articleRepository) FindAll(filters ArticleFilters, page, limit int) ([]
 // FindBySlug はslugを指定して記事を取得します
 func (r *articleRepository) FindBySlug(slug string) (*models.Article, error) {
 	var article models.Article
-	if err := r.db.Preload("Author").Where("slug = ? AND status = ?", slug, "public").First(&article).Error; err != nil {
-		return nil, err
+	result := r.db.Preload("Author").Where("slug = ? AND status = ?", slug, "public").Find(&article)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, nil
 	}
 	return &article, nil
 }

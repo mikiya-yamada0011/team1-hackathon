@@ -1,6 +1,7 @@
 package controller
 
 import (
+
 	"net/http"
 	"strconv"
 
@@ -21,7 +22,6 @@ func NewArticleController(db *gorm.DB) *ArticleController {
 	return &ArticleController{service: service}
 }
 
-// GetArticles は記事一覧を取得します
 // @Summary      記事一覧を取得
 // @Description  公開されているブログ記事の一覧を取得します。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
 // @Tags         記事 (Articles)
@@ -81,11 +81,12 @@ func (ac *ArticleController) GetArticleBySlug(c echo.Context) error {
 
 	response, err := ac.service.GetArticleBySlug(slug)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return c.JSON(http.StatusNotFound, models.ErrorResponse{
+			if err.Error() == "article not found" {
+				return c.JSON(http.StatusNotFound, models.ErrorResponse{
 				Error: "記事が見つかりません",
 			})
 		}
+
 		return c.JSON(http.StatusInternalServerError, models.ErrorResponse{
 			Error:   "記事の取得に失敗しました",
 			Message: err.Error(),
