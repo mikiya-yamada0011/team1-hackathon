@@ -22,7 +22,19 @@ func NewArticleController(db *gorm.DB) *ArticleController {
 	return &ArticleController{service: service}
 }
 
-// GetArticles は記事一覧を取得します
+// @Summary      記事一覧を取得
+// @Description  公開されているブログ記事の一覧を取得します。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
+// @Tags         記事 (Articles)
+// @Accept       json
+// @Produce      json
+// @Param        page query int false "ページ番号 (デフォルト: 1)" default(1)
+// @Param        limit query int false "1ページあたりの件数 (デフォルト: 10, 最大: 100)" default(10)
+// @Param        department query string false "部署でフィルタ (Dev, MKT, Ops)" Enums(Dev, MKT, Ops)
+// @Param        status query string false "ステータスでフィルタ (draft, internal, public)" Enums(draft, internal, public)
+// @Success      200 {object} models.ArticleListResponse "記事一覧"
+// @Failure      400 {object} models.ErrorResponse "リクエストパラメータが不正です"
+// @Failure      500 {object} models.ErrorResponse "サーバー内部でエラーが発生しました"
+// @Router       /api/articles [get]
 func (ac *ArticleController) GetArticles(c echo.Context) error {
 	// ページネーションパラメータを取得
 	page, _ := strconv.Atoi(c.QueryParam("page"))
@@ -53,7 +65,17 @@ func (ac *ArticleController) GetArticles(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-//GetArticleBySlugは
+// GetArticleBySlug はslugを指定して記事を取得します
+// @Summary      記事詳細を取得
+// @Description  指定されたslugのブログ記事の詳細を取得します。
+// @Tags         記事 (Articles)
+// @Accept       json
+// @Produce      json
+// @Param        slug path string true "記事のスラグ" example("go-api-development")
+// @Success      200 {object} models.ArticleResponse "記事詳細"
+// @Failure      404 {object} models.ErrorResponse "記事が見つかりません"
+// @Failure      500 {object} models.ErrorResponse "サーバー内部でエラーが発生しました"
+// @Router       /api/articles/{slug} [get]
 func (ac *ArticleController) GetArticleBySlug(c echo.Context) error {
 	slug := c.Param("slug")
 
