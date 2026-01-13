@@ -7,8 +7,18 @@ import (
 )
 
 type ArticleService interface {
+<<<<<<< HEAD
 	GetArticles(filters repositories.ArticleFilters, page, limit int) (*models.ArticleListResponse, error)
 	GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error)
+=======
+	GetArticles(filters ArticleFilters, page, limit int) (*models.ArticleListResponse, error)
+	GetArticleBySlug(slug string) (*models.ArticleResponse, error)
+>>>>>>> d20fcd9 (リファクタできた)
+}
+
+type ArticleFilters struct {
+	Department string
+	Status     string
 }
 
 type articleService struct {
@@ -20,7 +30,7 @@ func NewArticleService(repo repositories.ArticleRepository) ArticleService {
 }
 
 // GetArticles は記事一覧を取得します
-func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, limit int) (*models.ArticleListResponse, error) {
+func (s *articleService) GetArticles(filters ArticleFilters, page, limit int) (*models.ArticleListResponse, error) {
 	// リポジトリから記事を取得
 	filtersInRepository := repositories.ArticleFilters{
 		Department: filters.Department,
