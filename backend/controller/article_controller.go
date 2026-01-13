@@ -48,7 +48,7 @@ func (ac *ArticleController) GetArticles(c echo.Context) error {
 	}
 
 	// フィルタパラメータを取得
-	filters := repositories.ArticleFilters{
+	filters := services.ArticleFilters{
 		Department: c.QueryParam("department"),
 		Status:     c.QueryParam("status"),
 	}
