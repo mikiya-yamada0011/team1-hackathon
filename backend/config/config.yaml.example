@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+database:
+  port: "5432"
+  host: "db"
+  user: "myuser"
+  password: "mypassword"
+  name: "mydb"
+  seedDatabase: true
+
+cors:
+  allowedOrigins:
+    - "http://localhost:3000"
+  allowedMethods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+    - "OPTIONS"
+  allowedHeaders:
+    - "Content-Type"
+    - "Authorization"
+  allowCredentials: true

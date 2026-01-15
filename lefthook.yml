@@ -1,0 +1,14 @@
+pre-commit:
+  commands:
+    frontend-biome:
+      # ① frontendフォルダ配下のファイルだけを監視対象にする
+      glob: "frontend/**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+
+      # ② コマンドを実行する場所（カレントディレクトリ）を frontend にする
+      root: "frontend/"
+
+      # ③ 実行コマンド（中身はさっきと同じ）
+      # {staged_files} はルートからのパスで渡されるので Biome は正しく処理できます
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+
+      stage_fixed: true
