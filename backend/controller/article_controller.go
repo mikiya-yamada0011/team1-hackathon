@@ -22,7 +22,6 @@ func NewArticleController(db *gorm.DB) *ArticleController {
 	return &ArticleController{service: service}
 }
 
-// GetArticles は記事一覧を取得します
 // @Summary      記事一覧を取得
 // @Description  公開されているブログ記事の一覧を取得します。ログイン済みの場合は内部公開記事も含まれます。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
 // @Tags         記事 (Articles)

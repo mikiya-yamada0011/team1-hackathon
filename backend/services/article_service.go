@@ -49,6 +49,7 @@ func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, 
 	}, nil
 }
 
+
 // GetArticleBySlug はslugを指定して記事を取得します
 func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error) {
 	article, err := s.repo.FindBySlug(slug, isAuthenticated)
