@@ -1,10 +1,9 @@
 package services
 
 import (
-	"errors"
-
 	"github.com/yamada-mikiya/team1-hackathon/models"
 	"github.com/yamada-mikiya/team1-hackathon/repositories"
+	"errors"
 )
 
 type ArticleService interface {
