@@ -11,11 +11,6 @@ type ArticleService interface {
 	GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error)
 }
 
-type ArticleFilters struct {
-	Department string
-	Status     string
-}
-
 type articleService struct {
 	repo repositories.ArticleRepository
 }
@@ -27,7 +22,11 @@ func NewArticleService(repo repositories.ArticleRepository) ArticleService {
 // GetArticles は記事一覧を取得します
 func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, limit int) (*models.ArticleListResponse, error) {
 	// リポジトリから記事を取得
-	articles, totalCount, err := s.repo.FindAll(filters, page, limit)
+	filtersInRepository := repositories.ArticleFilters{
+		Department: filters.Department,
+		Status:     filters.Status,
+	}
+	articles, totalCount, err := s.repo.FindAll(filtersInRepository, page, limit)
 	if err != nil {
 		return nil, err
 	}
