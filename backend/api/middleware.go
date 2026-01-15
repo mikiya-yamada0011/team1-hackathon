@@ -1,7 +1,6 @@
 package api
 
 import (
-	"os"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,7 +10,7 @@ import (
 
 // OptionalAuthMiddleware はJWTトークンがあれば検証してユーザー情報をセットし、
 // なければゲスト扱いで通すミドルウェア
-func OptionalAuthMiddleware() echo.MiddlewareFunc {
+func OptionalAuthMiddleware(secretKey string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// JWTトークンの取得を試みる
@@ -20,7 +19,7 @@ func OptionalAuthMiddleware() echo.MiddlewareFunc {
 			if tokenString != "" {
 				// トークンがある場合は検証を試みる
 				token, err := jwt.ParseWithClaims(tokenString, &models.JwtCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-					return []byte(os.Getenv("SECRET_KEY")), nil
+					return []byte(secretKey), nil
 				})
 
 				if err == nil && token.Valid {

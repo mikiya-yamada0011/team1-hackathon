@@ -3,8 +3,6 @@ package services
 import (
 	"context"
 	"errors"
-	"os"
-	"sync"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -14,21 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	secretKey     string
-	secretKeyOnce sync.Once
-)
-
-func getSecretKey() (string, error) {
-	secretKeyOnce.Do(func() {
-		secretKey = os.Getenv("SECRET_KEY")
-	})
-	if secretKey == "" {
-		return "", errors.New("SECRET_KEY environment variable is not set or is empty")
-	}
-	return secretKey, nil
-}
-
 type AuthService interface {
 	SignUp(ctx context.Context, req models.SignUpRequest) (models.UserResponse, string, error)
 	LogIn(ctx context.Context, req models.AuthenticateRequest) (models.UserResponse, string, error)
@@ -37,14 +20,16 @@ type AuthService interface {
 }
 
 type authService struct {
-	userRepo repositories.UserRepository
-	db       *gorm.DB
+	userRepo  repositories.UserRepository
+	db        *gorm.DB
+	secretKey string
 }
 
-func NewAuthService(userRepo repositories.UserRepository, db *gorm.DB) AuthService {
+func NewAuthService(userRepo repositories.UserRepository, db *gorm.DB, secretKey string) AuthService {
 	return &authService{
-		userRepo: userRepo,
-		db:       db,
+		userRepo:  userRepo,
+		db:        db,
+		secretKey: secretKey,
 	}
 }
 
@@ -138,12 +123,7 @@ func (s *authService) createToken(ctx context.Context, user models.User) (string
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	key, err := getSecretKey()
-	if err != nil {
-		return "", err
-	}
-
-	tokenString, err := token.SignedString([]byte(key))
+	tokenString, err := token.SignedString([]byte(s.secretKey))
 	if err != nil {
 		return "", err
 	}
@@ -153,13 +133,8 @@ func (s *authService) createToken(ctx context.Context, user models.User) (string
 
 // ValidateToken はJWTトークンを検証し、ユーザーIDを返します
 func (s *authService) ValidateToken(ctx context.Context, tokenString string) (int, error) {
-	key, err := getSecretKey()
-	if err != nil {
-		return 0, err
-	}
-
 	token, err := jwt.ParseWithClaims(tokenString, &models.JwtCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(key), nil
+		return []byte(s.secretKey), nil
 	})
 
 	if err != nil {

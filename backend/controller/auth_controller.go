@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/yamada-mikiya/team1-hackathon/config"
 	"github.com/yamada-mikiya/team1-hackathon/models"
 	"github.com/yamada-mikiya/team1-hackathon/repositories"
 	"github.com/yamada-mikiya/team1-hackathon/services"
@@ -12,13 +13,15 @@ import (
 
 type AuthController struct {
 	service services.AuthService
+	config  *config.Config
 }
 
-func NewAuthController(db *gorm.DB) *AuthController {
+func NewAuthController(cfg *config.Config, db *gorm.DB) *AuthController {
 	userRepo := repositories.NewUserRepository(db)
-	service := services.NewAuthService(userRepo, db)
+	service := services.NewAuthService(userRepo, db, cfg.SecretKey)
 	return &AuthController{
 		service: service,
+		config:  cfg,
 	}
 }
 
@@ -69,13 +72,14 @@ func (c *AuthController) SignUpHandler(ctx echo.Context) error {
 	}
 
 	// CookieにJWTトークンを設定
+	isProduction := c.config.Server.Environment == "production"
 	cookie := &http.Cookie{
 		Name:     "token",
 		Value:    tokenString,
 		Path:     "/",
 		MaxAge:   259200, // 72時間
 		HttpOnly: true,
-		Secure:   false, // ローカル開発環境ではfalse、本番ではtrue
+		Secure:   isProduction, // 本番環境ではtrue
 		SameSite: http.SameSiteLaxMode,
 	}
 	ctx.SetCookie(cookie)
@@ -129,13 +133,14 @@ func (c *AuthController) LogInHandler(ctx echo.Context) error {
 	}
 
 	// CookieにJWTトークンを設定
+	isProduction := c.config.Server.Environment == "production"
 	cookie := &http.Cookie{
 		Name:     "token",
 		Value:    tokenString,
 		Path:     "/",
 		MaxAge:   259200, // 72時間
 		HttpOnly: true,
-		Secure:   false, // ローカル開発環境ではfalse、本番ではtrue
+		Secure:   isProduction, // 本番環境ではtrue
 		SameSite: http.SameSiteLaxMode,
 	}
 	ctx.SetCookie(cookie)
