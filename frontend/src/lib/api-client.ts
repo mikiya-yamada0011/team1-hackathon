@@ -9,12 +9,19 @@ export const AXIOS_INSTANCE = axios.create({
 });
 
 // レスポンスインターセプター: 401エラーで認証ページにリダイレクト
+// ただし、/api/auth/meへのリクエストは除外（認証状態確認のため）
 AXIOS_INSTANCE.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // 認証エラーの場合、認証ページにリダイレクト
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth')) {
+      // /api/auth/meへのリクエストは401でもリダイレクトしない（未ログイン状態）
+      const isAuthMeRequest = error.config?.url?.includes('/api/auth/me');
+
+      if (
+        !isAuthMeRequest &&
+        typeof window !== 'undefined' &&
+        !window.location.pathname.includes('/auth')
+      ) {
         window.location.href = '/auth';
       }
     }
