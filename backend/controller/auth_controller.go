@@ -157,18 +157,26 @@ func (c *AuthController) LogInHandler(ctx echo.Context) error {
 // @Failure      401 {object} models.ErrorResponse "認証されていません"
 // @Router       /api/auth/me [get]
 func (c *AuthController) GetMeHandler(ctx echo.Context) error {
-	// コンテキストから認証情報を取得（ミドルウェアで設定済みを想定）
-	user := ctx.Get("user")
-	if user == nil {
+	// コンテキストからuser_idを取得（ミドルウェアで設定済み）
+	userID := ctx.Get("user_id")
+	if userID == nil {
 		return ctx.JSON(http.StatusUnauthorized, models.ErrorResponse{
 			Error: "認証されていません",
 		})
 	}
 
-	userResponse, ok := user.(models.UserResponse)
+	// UserIDからユーザー情報を取得
+	userIDInt, ok := userID.(int)
 	if !ok {
 		return ctx.JSON(http.StatusInternalServerError, models.ErrorResponse{
-			Error: "ユーザー情報の取得に失敗しました",
+			Error: "ユーザーIDの取得に失敗しました",
+		})
+	}
+
+	userResponse, err := c.service.GetUserByID(ctx.Request().Context(), userIDInt)
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, models.ErrorResponse{
+			Error: "ユーザーが見つかりません",
 		})
 	}
 
