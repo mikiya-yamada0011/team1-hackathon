@@ -35,7 +35,7 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 
 	// コントローラー初期化
 	articleController := controller.NewArticleController(db)
-	authController := controller.NewAuthController(db)
+	authController := controller.NewAuthController(cfg, db)
 
 	// APIルート
 	api := router.Group("/api")
@@ -46,11 +46,11 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 			auth.POST("/signup", authController.SignUpHandler)
 			auth.POST("/login", authController.LogInHandler)
 			// 認証必須エンドポイント
-			auth.GET("/me", authController.GetMeHandler, OptionalAuthMiddleware())
+			auth.GET("/me", authController.GetMeHandler, OptionalAuthMiddleware(cfg.SecretKey))
 		}
 
 		// 記事関連（Optional Auth - トークンがあれば認証、なければゲスト扱い）
-		articles := api.Group("/articles", OptionalAuthMiddleware())
+		articles := api.Group("/articles", OptionalAuthMiddleware(cfg.SecretKey))
 		{
 			articles.GET("", articleController.GetArticles)
 			articles.GET("/:slug", articleController.GetArticleBySlug)
