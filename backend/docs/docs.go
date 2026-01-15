@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/articles": {
             "get": {
-                "description": "公開されているブログ記事の一覧を取得します。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。",
+                "description": "公開されているブログ記事の一覧を取得します。ログイン済みの場合は内部公開記事も含まれます。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。",
                 "consumes": [
                     "application/json"
                 ],
@@ -56,12 +56,12 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            "draft",
                             "internal",
-                            "public"
+                            "public",
+                            "all"
                         ],
                         "type": "string",
-                        "description": "ステータスでフィルタ (draft, internal, public)",
+                        "description": "ステータスでフィルタ (internal, public, all)。ゲストの場合は常にpublicのみ",
                         "name": "status",
                         "in": "query"
                     }
@@ -90,7 +90,7 @@ const docTemplate = `{
         },
         "/api/articles/{slug}": {
             "get": {
-                "description": "指定されたslugのブログ記事の詳細を取得します。",
+                "description": "指定されたslugのブログ記事の詳細を取得します。内部公開記事の場合はログインが必要です。",
                 "consumes": [
                     "application/json"
                 ],
@@ -118,8 +118,118 @@ const docTemplate = `{
                             "$ref": "#/definitions/ArticleResponse"
                         }
                     },
+                    "403": {
+                        "description": "内部公開記事にアクセスするにはログインが必要です",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "記事が見つかりません",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "サーバー内部でエラーが発生しました",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "description": "既存のユーザーを認証し、新しい認証トークンを発行します。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "認証 (Auth)"
+                ],
+                "summary": "ログイン (Log In)",
+                "parameters": [
+                    {
+                        "description": "ユーザー情報 (メールアドレスとパスワード)",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AuthenticateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "認証成功。新しい認証トークンを返します。",
+                        "schema": {
+                            "$ref": "#/definitions/AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "リクエストボディが不正です",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "認証に失敗しました (メールアドレスまたはパスワードが正しくありません)",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "サーバー内部でエラーが発生しました",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/signup": {
+            "post": {
+                "description": "新しいユーザーアカウントを作成し、認証トークンとユーザー情報を返します。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "認証 (Auth)"
+                ],
+                "summary": "新規ユーザー登録 (Sign Up)",
+                "parameters": [
+                    {
+                        "description": "ユーザー情報 (メールアドレス、パスワード、名前)",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "登録成功。ユーザー情報と認証トークンを返します。",
+                        "schema": {
+                            "$ref": "#/definitions/AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "リクエストボディが不正です",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "指定されたメールアドレスは既に使用されています",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
@@ -228,6 +338,36 @@ const docTemplate = `{
                 }
             }
         },
+        "AuthResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "user": {
+                    "$ref": "#/definitions/UserResponse"
+                }
+            }
+        },
+        "AuthenticateRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "password123"
+                }
+            }
+        },
         "AuthorResponse": {
             "type": "object",
             "properties": {
@@ -259,6 +399,54 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "詳細なエラー情報"
+                }
+            }
+        },
+        "SignUpRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "山田太郎"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "password123"
+                }
+            }
+        },
+        "UserResponse": {
+            "type": "object",
+            "properties": {
+                "affiliation": {
+                    "type": "string",
+                    "example": "開発部"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "icon_url": {
+                    "type": "string",
+                    "example": "https://example.com/icon.jpg"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "山田太郎"
                 }
             }
         }

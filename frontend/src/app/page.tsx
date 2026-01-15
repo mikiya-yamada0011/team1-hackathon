@@ -1,15 +1,27 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Filter, Search } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { ArticleResponse, GetApiArticlesDepartment } from '@/generated/models';
+import type {
+  ArticleResponse,
+  GetApiArticlesDepartment,
+  GetApiArticlesStatus,
+} from '@/generated/models';
 import { useArticles } from '@/hooks/useArticles';
+import { useAuth } from '@/hooks/useAuth';
 
 const DEPARTMENTS = [
   { id: 1, label: 'マーケティング', value: 'MKT' as GetApiArticlesDepartment },
@@ -17,15 +29,26 @@ const DEPARTMENTS = [
   { id: 3, label: '組織管理', value: 'Ops' as GetApiArticlesDepartment },
 ];
 
+const STATUS_OPTIONS = [
+  { label: 'すべて（公開 + 内部）', value: 'all' as GetApiArticlesStatus },
+  { label: '外部公開のみ', value: 'public' as GetApiArticlesStatus },
+  { label: '内部公開のみ', value: 'internal' as GetApiArticlesStatus },
+];
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<GetApiArticlesDepartment>('MKT');
+  const [statusFilter, setStatusFilter] = useState<GetApiArticlesStatus>('all');
+  const { isAuthenticated } = useAuth();
 
   // APIから記事を取得
+  // ログイン済みの場合はユーザーが選択したステータスで取得
+  // ゲストの場合は自動的にpublicのみが取得される
   const { data, isLoading, error } = useArticles({
     department: activeTab,
     page: 1,
     limit: 100,
+    status: isAuthenticated ? statusFilter : undefined, // ログイン済みならユーザーの選択、ゲストはundefined
   });
 
   const filteredArticles = (data?.articles || []).filter((article) => {
@@ -57,15 +80,39 @@ export default function Home() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-3xl font-bold tracking-tight text-slate-800">えーブログ</h1>
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search articles..."
-              className="pl-9 bg-white border-slate-200"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            {/* ログイン済みの場合のみステータスフィルターを表示 */}
+            {isAuthenticated && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2 bg-white border-slate-200">
+                    <Filter className="h-4 w-4" />
+                    {STATUS_OPTIONS.find((opt) => opt.value === statusFilter)?.label}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {STATUS_OPTIONS.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      onClick={() => setStatusFilter(option.value)}
+                      className={statusFilter === option.value ? 'bg-slate-100' : ''}
+                    >
+                      {option.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search articles..."
+                className="pl-9 bg-white border-slate-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 

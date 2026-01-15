@@ -14,32 +14,47 @@ import (
 	"gorm.io/gorm"
 )
 
-// ConnectDB はデータベースに接続
+// ConnectDB はデータベースに接続（リトライ機能付き）
 func ConnectDB(dsn string) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		slog.Error("データベース接続に失敗しました", "error", err)
-		return nil, fmt.Errorf("データベース接続失敗: %w", err)
+	const maxRetries = 30
+	const retryInterval = 1 * time.Second
+
+	var db *gorm.DB
+	var err error
+
+	for i := 1; i <= maxRetries; i++ {
+		slog.Info("データベース接続を試行中...", "attempt", i, "max", maxRetries)
+
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			slog.Warn("データベース接続に失敗しました。リトライします...", "error", err, "attempt", i)
+			time.Sleep(retryInterval)
+			continue
+		}
+
+		sqlDB, err := db.DB()
+		if err != nil {
+			slog.Warn("sql.DBの取得に失敗しました。リトライします...", "error", err, "attempt", i)
+			time.Sleep(retryInterval)
+			continue
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := sqlDB.PingContext(ctx); err != nil {
+			cancel()
+			_ = sqlDB.Close()
+			slog.Warn("データベースへのPingに失敗しました。リトライします...", "error", err, "attempt", i)
+			time.Sleep(retryInterval)
+			continue
+		}
+		cancel()
+
+		slog.Info("データベースに接続しました")
+		return db, nil
 	}
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		slog.Error("sql.DBの取得に失敗しました", "error", err)
-		return nil, fmt.Errorf("sql.DB取得失敗: %w", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := sqlDB.PingContext(ctx); err != nil {
-		_ = sqlDB.Close()
-		slog.Error("データベースへのPingに失敗しました", "error", err)
-		return nil, fmt.Errorf("データベースPing失敗: %w", err)
-	}
-
-	slog.Info("データベースに接続しました")
-
-	return db, nil
+	slog.Error("最大リトライ回数に到達しました。データベース接続に失敗しました", "error", err)
+	return nil, fmt.Errorf("データベース接続失敗（%d回リトライ後）: %w", maxRetries, err)
 }
 
 // Close はデータベース接続をクローズ
@@ -64,26 +79,36 @@ func Close(db *gorm.DB) error {
 	return nil
 }
 
-// RunMigrations はデータベースマイグレーションを実行
+// RunMigrations はデータベースマイグレーションを実行（リトライ機能付き）
 func RunMigrations(databaseURL string) error {
-	slog.Info("マイグレーションを開始します")
+	const maxRetries = 30
+	const retryInterval = 1 * time.Second
 
-	m, err := migrate.New(
-		"file://db/migrations",
-		databaseURL,
-	)
-	if err != nil {
-		slog.Error("マイグレーションの初期化に失敗しました", "error", err)
-		return fmt.Errorf("マイグレーション初期化失敗: %w", err)
+	for i := 1; i <= maxRetries; i++ {
+		slog.Info("マイグレーションを試行中...", "attempt", i, "max", maxRetries)
+
+		m, err := migrate.New(
+			"file://db/migrations",
+			databaseURL,
+		)
+		if err != nil {
+			slog.Warn("マイグレーションの初期化に失敗しました。リトライします...", "error", err, "attempt", i)
+			time.Sleep(retryInterval)
+			continue
+		}
+
+		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+			slog.Warn("マイグレーションに失敗しました。リトライします...", "error", err, "attempt", i)
+			time.Sleep(retryInterval)
+			continue
+		}
+
+		slog.Info("マイグレーションが正常に終了しました")
+		return nil
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		slog.Error("マイグレーションに失敗しました", "error", err)
-		return fmt.Errorf("マイグレーション実行失敗: %w", err)
-	}
-
-	slog.Info("マイグレーションが正常に終了しました")
-	return nil
+	slog.Error("最大リトライ回数に到達しました。マイグレーションに失敗しました")
+	return fmt.Errorf("マイグレーション実行失敗（%d回リトライ後）", maxRetries)
 }
 
 // SeedDatabase は開発環境用のテストデータを挿入

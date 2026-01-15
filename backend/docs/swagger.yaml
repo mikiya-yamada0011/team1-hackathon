@@ -68,6 +68,27 @@ definitions:
         example: "2026-01-06T12:00:00Z"
         type: string
     type: object
+  AuthResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      user:
+        $ref: '#/definitions/UserResponse'
+    type: object
+  AuthenticateRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
   AuthorResponse:
     properties:
       affiliation:
@@ -92,6 +113,41 @@ definitions:
         example: 詳細なエラー情報
         type: string
     type: object
+  SignUpRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      name:
+        example: 山田太郎
+        type: string
+      password:
+        example: password123
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  UserResponse:
+    properties:
+      affiliation:
+        example: 開発部
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      icon_url:
+        example: https://example.com/icon.jpg
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: 山田太郎
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -105,7 +161,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 公開されているブログ記事の一覧を取得します。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
+      description: 公開されているブログ記事の一覧を取得します。ログイン済みの場合は内部公開記事も含まれます。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
       parameters:
       - default: 1
         description: 'ページ番号 (デフォルト: 1)'
@@ -125,11 +181,11 @@ paths:
         in: query
         name: department
         type: string
-      - description: ステータスでフィルタ (draft, internal, public)
+      - description: ステータスでフィルタ (internal, public, all)。ゲストの場合は常にpublicのみ
         enum:
-        - draft
         - internal
         - public
+        - all
         in: query
         name: status
         type: string
@@ -155,7 +211,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 指定されたslugのブログ記事の詳細を取得します。
+      description: 指定されたslugのブログ記事の詳細を取得します。内部公開記事の場合はログインが必要です。
       parameters:
       - description: 記事のスラグ
         example: '"go-api-development"'
@@ -170,6 +226,10 @@ paths:
           description: 記事詳細
           schema:
             $ref: '#/definitions/ArticleResponse'
+        "403":
+          description: 内部公開記事にアクセスするにはログインが必要です
+          schema:
+            $ref: '#/definitions/ErrorResponse'
         "404":
           description: 記事が見つかりません
           schema:
@@ -181,6 +241,74 @@ paths:
       summary: 記事詳細を取得
       tags:
       - 記事 (Articles)
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 既存のユーザーを認証し、新しい認証トークンを発行します。
+      parameters:
+      - description: ユーザー情報 (メールアドレスとパスワード)
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AuthenticateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 認証成功。新しい認証トークンを返します。
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        "400":
+          description: リクエストボディが不正です
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: 認証に失敗しました (メールアドレスまたはパスワードが正しくありません)
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: サーバー内部でエラーが発生しました
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: ログイン (Log In)
+      tags:
+      - 認証 (Auth)
+  /api/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: 新しいユーザーアカウントを作成し、認証トークンとユーザー情報を返します。
+      parameters:
+      - description: ユーザー情報 (メールアドレス、パスワード、名前)
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 登録成功。ユーザー情報と認証トークンを返します。
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        "400":
+          description: リクエストボディが不正です
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "409":
+          description: 指定されたメールアドレスは既に使用されています
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: サーバー内部でエラーが発生しました
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: 新規ユーザー登録 (Sign Up)
+      tags:
+      - 認証 (Auth)
 securityDefinitions:
   Bearer:
     description: '認証トークンを''Bearer ''に続けて入力してください。 (例: Bearer {JWTトークン})'

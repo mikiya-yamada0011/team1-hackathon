@@ -11,7 +11,7 @@ export type GetApiArticlesStatus = (typeof GetApiArticlesStatus)[keyof typeof Ge
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetApiArticlesStatus = {
-  draft: 'draft',
   internal: 'internal',
   public: 'public',
+  all: 'all',
 } as const;

@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 // Article はブログ記事のモデル
 type Article struct {
@@ -23,9 +27,16 @@ type Article struct {
 type User struct {
 	ID           int       `json:"id" gorm:"primaryKey;autoIncrement"`
 	Name         string    `json:"name" gorm:"type:varchar(255);not null"`
+	Email        string    `json:"email" gorm:"type:varchar(255);unique;not null"`
 	Affiliation  *string   `json:"affiliation" gorm:"type:varchar(255)"`
 	PasswordHash string    `json:"-" gorm:"type:varchar(255);not null"`
 	IconURL      *string   `json:"icon_url" gorm:"type:text"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
+}
+
+// JwtCustomClaims はJWTのカスタムクレーム
+type JwtCustomClaims struct {
+	UserID int `json:"user_id"`
+	jwt.RegisteredClaims
 }

@@ -41,3 +41,18 @@ type ErrorResponse struct {
 	Error   string `json:"error" example:"エラーメッセージ"`
 	Message string `json:"message,omitempty" example:"詳細なエラー情報"`
 } // @name ErrorResponse
+
+// UserResponse は認証後のユーザー情報
+type UserResponse struct {
+	ID          int     `json:"id" example:"1"`
+	Name        string  `json:"name" example:"山田太郎"`
+	Email       string  `json:"email" example:"user@example.com"`
+	Affiliation *string `json:"affiliation,omitempty" example:"開発部"`
+	IconURL     *string `json:"icon_url,omitempty" example:"https://example.com/icon.jpg"`
+} // @name UserResponse
+
+// AuthResponse はサインアップ・ログインレスポンス
+type AuthResponse struct {
+	Token string       `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
+	User  UserResponse `json:"user"`
+} // @name AuthResponse
