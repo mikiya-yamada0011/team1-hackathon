@@ -26,6 +26,7 @@ func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, 
 	filtersInRepository := repositories.ArticleFilters{
 		Department: filters.Department,
 		Status:     filters.Status,
+		IsAuthenticated: filters.IsAuthenticated,
 	}
 	articles, totalCount, err := s.repo.FindAll(filtersInRepository, page, limit)
 	if err != nil {
