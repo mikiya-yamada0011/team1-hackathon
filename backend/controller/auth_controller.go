@@ -147,3 +147,30 @@ func (c *AuthController) LogInHandler(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, logInRes)
 }
+
+// GetMeHandler は現在ログインしているユーザー情報を取得します
+// @Summary      現在のユーザー情報を取得
+// @Description  Cookieからトークンを読み取り、現在ログイン中のユーザー情報を返します。
+// @Tags         認証 (Auth)
+// @Produce      json
+// @Success      200 {object} models.UserResponse "ユーザー情報"
+// @Failure      401 {object} models.ErrorResponse "認証されていません"
+// @Router       /api/auth/me [get]
+func (c *AuthController) GetMeHandler(ctx echo.Context) error {
+	// コンテキストから認証情報を取得（ミドルウェアで設定済みを想定）
+	user := ctx.Get("user")
+	if user == nil {
+		return ctx.JSON(http.StatusUnauthorized, models.ErrorResponse{
+			Error: "認証されていません",
+		})
+	}
+
+	userResponse, ok := user.(models.UserResponse)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "ユーザー情報の取得に失敗しました",
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, userResponse)
+}
