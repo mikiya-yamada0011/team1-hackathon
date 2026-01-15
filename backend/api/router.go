@@ -45,6 +45,8 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 		{
 			auth.POST("/signup", authController.SignUpHandler)
 			auth.POST("/login", authController.LogInHandler)
+			// 認証必須エンドポイント
+			auth.GET("/me", authController.GetMeHandler, OptionalAuthMiddleware())
 		}
 
 		// 記事関連（Optional Auth - トークンがあれば認証、なければゲスト扱い）
