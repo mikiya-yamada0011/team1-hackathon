@@ -1,19 +1,15 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/yamada-mikiya/team1-hackathon/models"
 	"github.com/yamada-mikiya/team1-hackathon/repositories"
-	"errors"
 )
 
 type ArticleService interface {
-<<<<<<< HEAD
 	GetArticles(filters repositories.ArticleFilters, page, limit int) (*models.ArticleListResponse, error)
 	GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error)
-=======
-	GetArticles(filters ArticleFilters, page, limit int) (*models.ArticleListResponse, error)
-	GetArticleBySlug(slug string) (*models.ArticleResponse, error)
->>>>>>> d20fcd9 (リファクタできた)
 }
 
 type ArticleFilters struct {
@@ -30,13 +26,9 @@ func NewArticleService(repo repositories.ArticleRepository) ArticleService {
 }
 
 // GetArticles は記事一覧を取得します
-func (s *articleService) GetArticles(filters ArticleFilters, page, limit int) (*models.ArticleListResponse, error) {
+func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, limit int) (*models.ArticleListResponse, error) {
 	// リポジトリから記事を取得
-	filtersInRepository := repositories.ArticleFilters{
-		Department: filters.Department,
-		Status:     filters.Status,
-	}
-	articles, totalCount, err := s.repo.FindAll(filtersInRepository, page, limit)
+	articles, totalCount, err := s.repo.FindAll(filters, page, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +49,6 @@ func (s *articleService) GetArticles(filters ArticleFilters, page, limit int) (*
 		TotalPages: totalPages,
 	}, nil
 }
-
 
 // GetArticleBySlug はslugを指定して記事を取得します
 func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error) {
