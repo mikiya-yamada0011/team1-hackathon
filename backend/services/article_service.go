@@ -7,7 +7,7 @@ import (
 
 type ArticleService interface {
 	GetArticles(filters repositories.ArticleFilters, page, limit int) (*models.ArticleListResponse, error)
-	GetArticleBySlug(slug string) (*models.ArticleResponse, error)
+	GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error)
 }
 
 type articleService struct {
@@ -67,8 +67,8 @@ func (s *articleService) GetArticles(filters repositories.ArticleFilters, page, 
 }
 
 // GetArticleBySlug はslugを指定して記事を取得します
-func (s *articleService) GetArticleBySlug(slug string) (*models.ArticleResponse, error) {
-	article, err := s.repo.FindBySlug(slug)
+func (s *articleService) GetArticleBySlug(slug string, isAuthenticated bool) (*models.ArticleResponse, error) {
+	article, err := s.repo.FindBySlug(slug, isAuthenticated)
 	if err != nil {
 		return nil, err
 	}

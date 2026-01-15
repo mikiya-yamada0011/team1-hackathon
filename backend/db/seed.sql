@@ -1,12 +1,17 @@
 -- 開発環境専用のテストデータ
 
+-- 既存のテストデータをクリア（開発環境のみ）
+TRUNCATE TABLE article_tags, articles, tags, users RESTART IDENTITY CASCADE;
+
 -- テストユーザーの挿入
-INSERT INTO users (id, name, affiliation, password_hash, icon_url) VALUES
-(1, '田中 太郎', 'Dev部門', '$2a$10$dummyhash1111111111111111111111111111111111111111', 'https://i.pravatar.cc/150?img=1'),
-(2, '佐藤 花子', 'MKT部門', '$2a$10$dummyhash2222222222222222222222222222222222222222', 'https://i.pravatar.cc/150?img=2'),
-(3, '鈴木 一郎', 'Ops部門', '$2a$10$dummyhash3333333333333333333333333333333333333333', 'https://i.pravatar.cc/150?img=3'),
-(4, '高橋 美咲', 'Dev部門', '$2a$10$dummyhash4444444444444444444444444444444444444444', 'https://i.pravatar.cc/150?img=4')
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO users (id, name, email, affiliation, password_hash, icon_url) VALUES
+(1, '田中 太郎', 'tanaka@example.com', 'Dev部門', '$2a$10$dummyhash1111111111111111111111111111111111111111', 'https://i.pravatar.cc/150?img=1'),
+(2, '佐藤 花子', 'sato@example.com', 'MKT部門', '$2a$10$dummyhash2222222222222222222222222222222222222222', 'https://i.pravatar.cc/150?img=2'),
+(3, '鈴木 一郎', 'suzuki@example.com', 'Ops部門', '$2a$10$dummyhash3333333333333333333333333333333333333333', 'https://i.pravatar.cc/150?img=3'),
+(4, '高橋 美咲', 'takahashi@example.com', 'Dev部門', '$2a$10$dummyhash4444444444444444444444444444444444444444', 'https://i.pravatar.cc/150?img=4');
+
+-- ユーザーIDシーケンスをリセット
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 
 -- タグの挿入
 INSERT INTO tags (name, is_category) VALUES
@@ -17,8 +22,7 @@ INSERT INTO tags (name, is_category) VALUES
 ('インフラ', false),
 ('チュートリアル', true),
 ('ベストプラクティス', true),
-('トラブルシューティング', true)
-ON CONFLICT (name) DO NOTHING;
+('トラブルシューティング', true);
 
 -- テスト記事の挿入
 INSERT INTO articles (author_id, article_type, title, content, slug, department, status, thumbnail_url) VALUES
@@ -81,8 +85,7 @@ INSERT INTO articles (author_id, article_type, title, content, slug, department,
     'MKT',
     'draft',
     'https://images.unsplash.com/photo-1542744094-3a31f272c490?w=800'
-)
-ON CONFLICT (slug) DO NOTHING;
+);
 
 -- 外部記事のURLを設定
 UPDATE articles 
@@ -106,5 +109,4 @@ INSERT INTO article_tags (article_id, tag_id) VALUES
 -- TypeScript公式ドキュメント
 (5, 1),
 -- コンテンツマーケティングの基礎
-(6, 4)
-ON CONFLICT (article_id, tag_id) DO NOTHING;
+(6, 4);
