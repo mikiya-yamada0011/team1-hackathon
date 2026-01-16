@@ -8,6 +8,8 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"github.com/yamada-mikiya/team1-hackathon/config"
 	"github.com/yamada-mikiya/team1-hackathon/controller"
+	"github.com/yamada-mikiya/team1-hackathon/repositories"
+	"github.com/yamada-mikiya/team1-hackathon/services"
 	"gorm.io/gorm"
 )
 
@@ -37,6 +39,10 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 	articleController := controller.NewArticleController(db)
 	authController := controller.NewAuthController(cfg, db)
 
+	//UserControllerを作成
+	userRepo := repositories.NewUserRepository(db)
+	userService := services.NewUserService(userRepo)
+	userController := controller.NewUserController(userService)
 	// APIルート
 	api := router.Group("/api")
 	{
@@ -54,6 +60,12 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 		{
 			articles.GET("", articleController.GetArticles)
 			articles.GET("/:slug", articleController.GetArticleBySlug)
+		}
+
+		//ユーザー関連
+		users := api.Group("/users")
+		{
+			users.GET("/:id", userController.GetUserDetailHandler)
 		}
 	}
 
