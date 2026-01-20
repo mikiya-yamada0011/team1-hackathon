@@ -17,14 +17,6 @@ export function Header() {
         </Link>
 
         <nav className="flex items-center gap-6">
-          <Link
-            href="/"
-            className={`text-sm font-medium transition-colors hover:text-primary ${
-              pathname === '/' ? 'text-primary' : 'text-slate-600'
-            }`}
-          >
-            記事一覧
-          </Link>
           {/* 認証済みユーザーのみAuthButtonを表示 */}
           {isAuthenticated && <AuthButton />}
         </nav>
