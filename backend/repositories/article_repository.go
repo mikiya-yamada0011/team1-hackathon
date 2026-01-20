@@ -10,6 +10,7 @@ import (
 type ArticleRepository interface {
 	FindAll(filters ArticleFilters, page, limit int) ([]models.Article, int64, error)
 	FindBySlug(slug string, isAuthenticated bool) (*models.Article, error)
+	Create(article *models.Article) error
 }
 
 type ArticleFilters struct {
@@ -98,4 +99,9 @@ func (r *articleRepository) FindBySlug(slug string, isAuthenticated bool) (*mode
 		// draft等のその他のステータスは見つからない扱い（404）
 		return nil, gorm.ErrRecordNotFound
 	}
+}
+
+// Create は新しい記事を作成します
+func (r *articleRepository) Create(article *models.Article) error {
+	return r.db.Create(article).Error
 }

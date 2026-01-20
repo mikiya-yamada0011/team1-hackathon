@@ -31,8 +31,9 @@ type DatabaseConfig struct {
 }
 
 type ServerConfig struct {
-	Port        string `yaml:"port" env:"SERVER_PORT"`
-	Environment string `yaml:"environment" env:"ENVIRONMENT"`
+	Port         string `yaml:"port" env:"SERVER_PORT"`
+	Environment  string `yaml:"environment" env:"ENVIRONMENT"`
+	CookieDomain string `yaml:"cookieDomain" env:"COOKIE_DOMAIN"`
 }
 
 type CorsConfig struct {

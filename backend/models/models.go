@@ -13,6 +13,7 @@ type Article struct {
 	ArticleType  string    `json:"article_type" gorm:"type:varchar(50);not null"`
 	Title        string    `json:"title" gorm:"type:varchar(255);not null"`
 	Content      *string   `json:"content" gorm:"type:text"`
+	Description  *string   `json:"description" gorm:"type:text"`
 	ExternalURL  *string   `json:"external_url" gorm:"type:text"`
 	ThumbnailURL *string   `json:"thumbnail_url" gorm:"type:text"`
 	Slug         string    `json:"slug" gorm:"type:varchar(255);unique;not null"`

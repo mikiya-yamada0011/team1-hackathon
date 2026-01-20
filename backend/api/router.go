@@ -51,6 +51,7 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 		{
 			auth.POST("/signup", authController.SignUpHandler)
 			auth.POST("/login", authController.LogInHandler)
+			auth.POST("/logout", authController.LogoutHandler)
 			// 認証必須エンドポイント
 			auth.GET("/me", authController.GetMeHandler, OptionalAuthMiddleware(cfg.SecretKey))
 		}

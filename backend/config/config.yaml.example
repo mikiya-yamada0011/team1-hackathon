@@ -1,5 +1,15 @@
 server:
   port: 8080
+<<<<<<< HEAD
+  environment: development
+
+secretKey: "your-secret-key-for-development"
+=======
+  environment: development  # "development" または "production"
+  cookieDomain: ""  # 空の場合は現在のドメイン。本番環境では ".yourdomain.com" のように設定
+
+secretKey: "your-secret-key-here"  # 本番環境では環境変数 SECRET_KEY で設定することを推奨
+>>>>>>> 4a24c9b (ドメイン属性追加)
 
 database:
   port: "5432"
