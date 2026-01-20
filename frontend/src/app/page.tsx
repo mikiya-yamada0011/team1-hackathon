@@ -161,7 +161,7 @@ export default function Home() {
         </div>
 
         {/* Filter Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-1 md:mb-8 gap-1 md:gap-4">
           <div className="w-full md:w-auto" />
           <div className="flex items-center gap-3 w-full md:w-auto">
             {/* ログイン済みの場合のみステータスフィルターを表示 */}
@@ -205,7 +205,7 @@ export default function Home() {
           className="w-full"
           onValueChange={(value) => setActiveTab(value as GetApiArticlesDepartment)}
         >
-          <TabsList className="grid w-full grid-cols-3 mb-8 h-12 bg-white border border-slate-200">
+          <TabsList className="grid w-full grid-cols-3 mb-1 md:mb-8 h-12 bg-white border border-slate-200">
             {DEPARTMENTS.map((dept) => (
               <TabsTrigger
                 key={dept.id}
