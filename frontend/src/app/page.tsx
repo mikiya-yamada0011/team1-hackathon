@@ -148,7 +148,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[9px] md:text-[11px] text-slate-500 mb-0 md:mb-0.5">
+                  <p className="text-[8px] md:text-[11px] text-slate-500 mb-0 md:mb-0.5 leading-tight">
                     様々なプロダクトをご利用ください
                   </p>
                   <h3 className="text-[11px] md:text-sm font-semibold text-slate-900">
