@@ -56,3 +56,12 @@ type AuthResponse struct {
 	Token string       `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
 	User  UserResponse `json:"user"`
 } // @name AuthResponse
+
+// UserDetailResponse は公開用のユーザー詳細情報（メアドなし）
+type UserDetailResponse struct {
+	ID          int       `json:"id" example:"1"`
+	Name        string    `json:"name" example:"山田太郎"`
+	Affiliation *string   `json:"affiliation,omitempty" example:"Dev"`
+	IconURL     *string   `json:"icon_url,omitempty" example:"https://example.com/icon.jpg"`
+	CreatedAt   time.Time `json:"created_at" example:"2026-01-01T12:00:00Z"`
+} // @name UserDetailResponse
