@@ -30,7 +30,7 @@ import type {
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * 公開されているブログ記事の一覧を取得します。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
+ * 公開されているブログ記事の一覧を取得します。ログイン済みの場合は内部公開記事も含まれます。ページネーション、部署フィルタ、ステータスフィルタをサポートしています。
  * @summary 記事一覧を取得
  */
 export const getApiArticles = (
@@ -151,7 +151,7 @@ export function useGetApiArticles<
 }
 
 /**
- * 指定されたslugのブログ記事の詳細を取得します。
+ * 指定されたslugのブログ記事の詳細を取得します。内部公開記事の場合はログインが必要です。
  * @summary 記事詳細を取得
  */
 export const getApiArticlesSlug = (

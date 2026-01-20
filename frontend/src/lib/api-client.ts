@@ -1,26 +1,44 @@
-import Axios, { type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
 
-export const AXIOS_INSTANCE = Axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
+export const AXIOS_INSTANCE = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080',
+  withCredentials: true, // Cookieを自動的に送信
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+
+// レスポンスインターセプター: 401エラーで認証ページにリダイレクト
+// ただし、/api/auth/meへのリクエストは除外（認証状態確認のため）
+AXIOS_INSTANCE.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // /api/auth/meへのリクエストは401でもリダイレクトしない（未ログイン状態）
+      const isAuthMeRequest = error.config?.url?.includes('/api/auth/me');
+
+      if (
+        !isAuthMeRequest &&
+        typeof window !== 'undefined' &&
+        !window.location.pathname.includes('/auth')
+      ) {
+        window.location.href = '/auth';
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const customInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
 ): Promise<T> => {
-  const source = Axios.CancelToken.source();
   const promise = AXIOS_INSTANCE({
     ...config,
     ...options,
-    cancelToken: source.token,
   }).then(({ data }) => data);
-
-  // @ts-expect-error
-  promise.cancel = () => {
-    source.cancel('Query was cancelled');
-  };
 
   return promise;
 };
 
-export default customInstance;
+export default AXIOS_INSTANCE;

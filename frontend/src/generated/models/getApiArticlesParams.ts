@@ -23,7 +23,7 @@ export type GetApiArticlesParams = {
    */
   department?: GetApiArticlesDepartment;
   /**
-   * ステータスでフィルタ (draft, internal, public)
+   * ステータスでフィルタ (internal, public, all)。ゲストの場合は常にpublicのみ
    */
   status?: GetApiArticlesStatus;
 };
