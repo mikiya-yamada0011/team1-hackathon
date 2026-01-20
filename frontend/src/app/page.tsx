@@ -173,8 +173,15 @@ function ArticleCard({
   article: ArticleResponse;
   formatDate: (date?: string) => string;
 }) {
+  // 外部記事の場合は外部URLへ、内部記事の場合は詳細ページへ
+  const isExternal = article.article_type === 'external' && article.external_url;
+  const href = isExternal ? article.external_url! : `/detail/${article.slug}`;
+  const linkProps = isExternal ? { href, target: '_blank', rel: 'noopener noreferrer' } : { href };
+
+  const CardWrapper = isExternal ? 'a' : Link;
+
   return (
-    <Link href={`/detail/${article.slug}`}>
+    <CardWrapper {...linkProps}>
       <Card className="group hover:shadow-xl transition-all duration-300 border-none shadow-sm bg-white flex flex-col h-full overflow-hidden cursor-pointer">
         {/* Thumbnail Image */}
         <div className="relative w-full aspect-video overflow-hidden bg-slate-100">
@@ -225,6 +232,6 @@ function ArticleCard({
           )}
         </CardFooter>
       </Card>
-    </Link>
+    </CardWrapper>
   );
 }

@@ -37,7 +37,10 @@ export const useAuth = create<AuthState>()((set) => ({
   login: async (email, password) => {
     try {
       const response = await postApiAuthLogin({ email, password });
-      // バックエンドがCookieを設定するので、ユーザー情報をセット
+      // バックエンドがCookieを設定するが、3rd-party cookieブロック対策としてlocalStorageにも保存
+      if (response.token) {
+        localStorage.setItem('auth_token', response.token);
+      }
       set({ user: response.user, isAuthenticated: true });
     } catch (error: unknown) {
       const message =
@@ -59,7 +62,10 @@ export const useAuth = create<AuthState>()((set) => ({
   signup: async (email, password, name) => {
     try {
       const response = await postApiAuthSignup({ email, password, name });
-      // バックエンドがCookieを設定するので、ユーザー情報をセット
+      // バックエンドがCookieを設定するが、3rd-party cookieブロック対策としてlocalStorageにも保存
+      if (response.token) {
+        localStorage.setItem('auth_token', response.token);
+      }
       set({ user: response.user, isAuthenticated: true });
     } catch (error: unknown) {
       const message =
@@ -82,9 +88,12 @@ export const useAuth = create<AuthState>()((set) => ({
     try {
       // バックエンドの/api/auth/logoutエンドポイントを呼び出してCookieを削除
       await AXIOS_INSTANCE.post('/api/auth/logout');
+      // localStorageからトークンを削除
+      localStorage.removeItem('auth_token');
       set({ user: null, isAuthenticated: false });
     } catch (_error) {
       // エラーでも状態をクリア
+      localStorage.removeItem('auth_token');
       set({ user: null, isAuthenticated: false });
     }
   },

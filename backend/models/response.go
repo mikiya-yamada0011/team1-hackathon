@@ -17,6 +17,7 @@ type ArticleResponse struct {
 	Title        string         `json:"title" example:"Go言語でのAPI開発入門"`
 	ArticleType  string         `json:"article_type" example:"markdown" enums:"markdown,external"`
 	Content      *string        `json:"content,omitempty" example:"記事の本文です..."`
+	Description  *string        `json:"description,omitempty" example:"記事の要約や説明文です"`
 	ExternalURL  *string        `json:"external_url,omitempty" example:"https://example.com/article"`
 	ThumbnailURL *string        `json:"thumbnail_url,omitempty" example:"https://example.com/thumbnail.jpg"`
 	Slug         string         `json:"slug" example:"go-api-development"`

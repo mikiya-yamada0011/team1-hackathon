@@ -8,14 +8,28 @@
  */
 
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
 } from '@tanstack/react-query';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { customInstance } from '../../../lib/api-client';
-import type { AuthenticateRequest, AuthResponse, ErrorResponse, SignUpRequest } from '../../models';
+import type {
+  AuthenticateRequest,
+  AuthResponse,
+  ErrorResponse,
+  SignUpRequest,
+  UserResponse,
+} from '../../models';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -106,6 +120,116 @@ export const usePostApiAuthLogin = <TError = ErrorResponse, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
+/**
+ * Cookieからトークンを読み取り、現在ログイン中のユーザー情報を返します。
+ * @summary 現在のユーザー情報を取得
+ */
+export const getApiAuthMe = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<UserResponse>({ url: `/api/auth/me`, method: 'GET', signal }, options);
+};
+
+export const getGetApiAuthMeQueryKey = () => {
+  return [`/api/auth/me`] as const;
+};
+
+export const getGetApiAuthMeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiAuthMe>>,
+  TError = ErrorResponse,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthMe>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetApiAuthMeQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiAuthMe>>> = ({ signal }) =>
+    getApiAuthMe(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiAuthMe>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetApiAuthMeQueryResult = NonNullable<Awaited<ReturnType<typeof getApiAuthMe>>>;
+export type GetApiAuthMeQueryError = ErrorResponse;
+
+export function useGetApiAuthMe<
+  TData = Awaited<ReturnType<typeof getApiAuthMe>>,
+  TError = ErrorResponse,
+>(
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthMe>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiAuthMe>>,
+          TError,
+          Awaited<ReturnType<typeof getApiAuthMe>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetApiAuthMe<
+  TData = Awaited<ReturnType<typeof getApiAuthMe>>,
+  TError = ErrorResponse,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthMe>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiAuthMe>>,
+          TError,
+          Awaited<ReturnType<typeof getApiAuthMe>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetApiAuthMe<
+  TData = Awaited<ReturnType<typeof getApiAuthMe>>,
+  TError = ErrorResponse,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthMe>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary 現在のユーザー情報を取得
+ */
+
+export function useGetApiAuthMe<
+  TData = Awaited<ReturnType<typeof getApiAuthMe>>,
+  TError = ErrorResponse,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthMe>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetApiAuthMeQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 /**
  * 新しいユーザーアカウントを作成し、認証トークンとユーザー情報を返します。
  * @summary 新規ユーザー登録 (Sign Up)
