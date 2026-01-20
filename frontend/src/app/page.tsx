@@ -82,17 +82,17 @@ export default function Home() {
         <Image src="/header.png" alt="Header Image" fill className="object-cover" priority />
       </div>
 
-      <div className="container mx-auto px-4 py-4 md:py-12 max-w-[1600px]">
+      <div className="container mx-auto px-2 md:px-4 py-4 md:py-12 max-w-[1600px]">
         {/* Info Cards Section */}
-        <div className="grid grid-cols-2 gap-2 mb-4 md:mb-6">
+        <div className="grid grid-cols-2 gap-1 md:gap-2 mb-4 md:mb-6">
           <Link
             href="https://a4-home-page.vercel.app/home"
             target="_blank"
             rel="noopener noreferrer"
             className="group"
           >
-            <div className="bg-white border border-slate-200 rounded-lg p-2 md:p-4 hover:border-slate-400 transition-colors">
-              <div className="flex items-center gap-2 md:gap-3">
+            <div className="bg-white border border-slate-200 rounded-lg p-1.5 md:p-4 hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-1.5 md:gap-3">
                 <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-4 h-4 md:w-5 md:h-5 text-slate-600"
@@ -128,8 +128,8 @@ export default function Home() {
             rel="noopener noreferrer"
             className="group"
           >
-            <div className="bg-white border border-slate-200 rounded-lg p-2 md:p-4 hover:border-slate-400 transition-colors">
-              <div className="flex items-center gap-2 md:gap-3">
+            <div className="bg-white border border-slate-200 rounded-lg p-1.5 md:p-4 hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-1.5 md:gap-3">
                 <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-4 h-4 md:w-5 md:h-5 text-slate-600"
