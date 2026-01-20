@@ -203,12 +203,7 @@ export default function UserPage({ params }: UserPageProps) {
               {visibleArticles.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {visibleArticles.map((article) => (
-                    <ArticleCard
-                      key={article.id}
-                      article={article}
-                      formatDate={formatDate}
-                      isAuthenticated={isAuthenticated}
-                    />
+                    <ArticleCard key={article.id} article={article} formatDate={formatDate} />
                   ))}
                 </div>
               ) : (
@@ -244,14 +239,12 @@ export default function UserPage({ params }: UserPageProps) {
 function ArticleCard({
   article,
   formatDate,
-  isAuthenticated,
 }: {
   article: ArticleResponse;
   formatDate: (date?: string) => string;
-  isAuthenticated: boolean;
 }) {
   const isExternal = article.article_type === 'external' && article.external_url;
-  const href = isExternal ? article.external_url! : `/detail/${article.slug}`;
+  const href = isExternal ? (article.external_url ?? '') : `/detail/${article.slug}`;
 
   const handleCardClick = () => {
     if (isExternal && article.external_url) {

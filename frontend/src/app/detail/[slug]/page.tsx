@@ -224,6 +224,8 @@ export default function ArticleDetailPage() {
                             />
                           ),
                           img: ({ node, ...props }) => (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            // biome-ignore lint/performance/noImgElement: react-markdown requires img element
                             <img
                               className="rounded-lg shadow-md my-6"
                               {...props}

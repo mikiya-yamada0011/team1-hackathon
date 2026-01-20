@@ -83,6 +83,77 @@ export default function Home() {
       </div>
 
       <div className="container mx-auto px-4 py-12 max-w-[1600px]">
+        {/* Info Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+          <Link
+            href="https://a4-home-page.vercel.app/home"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group"
+          >
+            <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
+                  <svg
+                    className="w-5 h-5 text-slate-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-label="ホームページアイコン"
+                  >
+                    <title>ホームページアイコン</title>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] text-slate-500 mb-0.5">神大生に最高の学生生活を。</p>
+                  <h3 className="text-sm font-semibold text-slate-900">A4 ホームページ</h3>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="https://a4-home-page.vercel.app/product"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group"
+          >
+            <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
+                  <svg
+                    className="w-5 h-5 text-slate-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-label="アプリ一覧アイコン"
+                  >
+                    <title>アプリ一覧アイコン</title>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] text-slate-500 mb-0.5">
+                    様々なプロダクトをご利用ください
+                  </p>
+                  <h3 className="text-sm font-semibold text-slate-900">A4のアプリ一覧</h3>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+
         {/* Filter Section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="w-full md:w-auto" />
@@ -180,7 +251,7 @@ function ArticleCard({
 }) {
   // 外部記事の場合は外部URLへ、内部記事の場合は詳細ページへ
   const isExternal = article.article_type === 'external' && article.external_url;
-  const href = isExternal ? article.external_url! : `/detail/${article.slug}`;
+  const href = isExternal ? (article.external_url ?? '') : `/detail/${article.slug}`;
 
   const handleCardClick = () => {
     if (isExternal && article.external_url) {
