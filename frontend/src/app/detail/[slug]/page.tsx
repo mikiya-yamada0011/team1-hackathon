@@ -89,9 +89,6 @@ export default function ArticleDetailPage() {
               <Badge variant="outline" className="text-xs font-medium border-slate-200">
                 {getDepartmentLabel(article.department)}
               </Badge>
-              <Badge variant="outline" className="text-xs font-medium border-slate-200">
-                {article.article_type}
-              </Badge>
             </div>
 
             <h1 className="text-4xl font-bold text-slate-800 mb-6 leading-tight">

@@ -308,9 +308,6 @@ function ArticleCard({
           <Badge variant="outline" className="text-[10px]">
             {article.department}
           </Badge>
-          <Badge variant="outline" className="text-[10px]">
-            {article.article_type}
-          </Badge>
           {getStatusBadge()}
         </div>
         <h3 className="text-base font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
