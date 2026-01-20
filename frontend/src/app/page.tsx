@@ -84,7 +84,7 @@ export default function Home() {
 
       <div className="container mx-auto px-4 py-12 max-w-[1600px]">
         {/* Info Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-3 mb-6">
           <Link
             href="https://a4-home-page.vercel.app/home"
             target="_blank"
