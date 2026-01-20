@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50 text-foreground">
       {/* Header Image Section */}
-      <div className="w-full h-48 md:h-64 lg:h-80 relative overflow-hidden bg-slate-200">
+      <div className="w-full h-32 md:h-64 lg:h-80 relative overflow-hidden bg-slate-200">
         <Image src="/header.png" alt="Header Image" fill className="object-cover" priority />
       </div>
 
