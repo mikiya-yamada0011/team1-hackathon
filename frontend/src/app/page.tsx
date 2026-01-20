@@ -82,9 +82,9 @@ export default function Home() {
         <Image src="/header.png" alt="Header Image" fill className="object-cover" priority />
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-[1600px]">
+      <div className="container mx-auto px-4 py-4 md:py-12 max-w-[1600px]">
         {/* Info Cards Section */}
-        <div className="grid grid-cols-2 gap-2 mb-6">
+        <div className="grid grid-cols-2 gap-2 mb-4 md:mb-6">
           <Link
             href="https://a4-home-page.vercel.app/home"
             target="_blank"
