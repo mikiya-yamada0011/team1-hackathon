@@ -84,18 +84,18 @@ export default function Home() {
 
       <div className="container mx-auto px-4 py-12 max-w-[1600px]">
         {/* Info Cards Section */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-2 mb-6">
           <Link
             href="https://a4-home-page.vercel.app/home"
             target="_blank"
             rel="noopener noreferrer"
             className="group"
           >
-            <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-400 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
+            <div className="bg-white border border-slate-200 rounded-lg p-2 md:p-4 hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 text-slate-600"
+                    className="w-4 h-4 md:w-5 md:h-5 text-slate-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -111,8 +111,12 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] text-slate-500 mb-0.5">神大生に最高の学生生活を。</p>
-                  <h3 className="text-sm font-semibold text-slate-900">A4 ホームページ</h3>
+                  <p className="text-[9px] md:text-[11px] text-slate-500 mb-0 md:mb-0.5">
+                    神大生に最高の学生生活を。
+                  </p>
+                  <h3 className="text-[11px] md:text-sm font-semibold text-slate-900">
+                    A4 ホームページ
+                  </h3>
                 </div>
               </div>
             </div>
@@ -124,11 +128,11 @@ export default function Home() {
             rel="noopener noreferrer"
             className="group"
           >
-            <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-400 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
+            <div className="bg-white border border-slate-200 rounded-lg p-2 md:p-4 hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 text-slate-600"
+                    className="w-4 h-4 md:w-5 md:h-5 text-slate-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -144,10 +148,12 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] text-slate-500 mb-0.5">
+                  <p className="text-[9px] md:text-[11px] text-slate-500 mb-0 md:mb-0.5">
                     様々なプロダクトをご利用ください
                   </p>
-                  <h3 className="text-sm font-semibold text-slate-900">A4のアプリ一覧</h3>
+                  <h3 className="text-[11px] md:text-sm font-semibold text-slate-900">
+                    A4のアプリ一覧
+                  </h3>
                 </div>
               </div>
             </div>
