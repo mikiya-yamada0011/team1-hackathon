@@ -27,6 +27,7 @@ import type {
   AuthenticateRequest,
   AuthResponse,
   ErrorResponse,
+  PostApiAuthLogout200,
   SignUpRequest,
   UserResponse,
 } from '../../models';
@@ -117,6 +118,71 @@ export const usePostApiAuthLogin = <TError = ErrorResponse, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getPostApiAuthLoginMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+/**
+ * クッキーを削除してログアウトします。
+ * @summary ログアウト (Logout)
+ */
+export const postApiAuthLogout = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<PostApiAuthLogout200>(
+    { url: `/api/auth/logout`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getPostApiAuthLogoutMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiAuthLogout>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<Awaited<ReturnType<typeof postApiAuthLogout>>, TError, void, TContext> => {
+  const mutationKey = ['postApiAuthLogout'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiAuthLogout>>, void> = () => {
+    return postApiAuthLogout(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostApiAuthLogoutMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiAuthLogout>>
+>;
+
+export type PostApiAuthLogoutMutationError = unknown;
+
+/**
+ * @summary ログアウト (Logout)
+ */
+export const usePostApiAuthLogout = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiAuthLogout>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof postApiAuthLogout>>, TError, void, TContext> => {
+  const mutationOptions = getPostApiAuthLogoutMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

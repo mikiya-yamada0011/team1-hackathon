@@ -119,10 +119,10 @@ definitions:
     properties:
       department:
         enum:
-        - Dev
-        - MKT
-        - Ops
-        example: Dev
+        - 開発
+        - マーケティング
+        - 組織管理
+        example: 開発
         type: string
       status:
         enum:
@@ -150,6 +150,13 @@ definitions:
     type: object
   SignUpRequest:
     properties:
+      affiliation:
+        enum:
+        - 開発
+        - マーケティング
+        - 組織管理
+        example: 開発
+        type: string
       email:
         example: user@example.com
         type: string
@@ -164,6 +171,31 @@ definitions:
     - email
     - name
     - password
+    type: object
+  UserDetailResponse:
+    properties:
+      affiliation:
+        example: Dev
+        type: string
+      articles:
+        items:
+          $ref: '#/definitions/ArticleResponse'
+        type: array
+      created_at:
+        example: "2026-01-01T12:00:00Z"
+        type: string
+      icon_url:
+        example: https://example.com/icon.jpg
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: 山田太郎
+        type: string
+      portfolio_key:
+        example: abc123xyz
+        type: string
     type: object
   UserResponse:
     properties:
@@ -344,6 +376,21 @@ paths:
       summary: ログイン (Log In)
       tags:
       - 認証 (Auth)
+  /api/auth/logout:
+    post:
+      description: クッキーを削除してログアウトします。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ログアウト成功
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ログアウト (Logout)
+      tags:
+      - 認証 (Auth)
   /api/auth/me:
     get:
       description: Cookieからトークンを読み取り、現在ログイン中のユーザー情報を返します。
@@ -395,6 +442,43 @@ paths:
       summary: 新規ユーザー登録 (Sign Up)
       tags:
       - 認証 (Auth)
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 指定されたIDのユーザー公開プロフィール（名前、所属、アイコン、記事一覧）を取得します。未認証でもアクセス可能ですが、外部公開記事のみ表示されます。
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ポートフォリオキー（内部公開記事も表示する場合に必要）
+        in: query
+        name: portfolio_key
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UserDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: ユーザー詳細取得
+      tags:
+      - Users
 securityDefinitions:
   Bearer:
     description: '認証トークンを''Bearer ''に続けて入力してください。 (例: Bearer {JWTトークン})'

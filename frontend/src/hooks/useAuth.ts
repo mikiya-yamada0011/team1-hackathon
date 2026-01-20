@@ -2,14 +2,19 @@
 
 import { create } from 'zustand';
 import { postApiAuthLogin, postApiAuthSignup } from '@/generated/api/認証-auth/認証-auth';
-import type { UserResponse } from '@/generated/models';
+import type { SignUpRequestAffiliation, UserResponse } from '@/generated/models';
 import { AXIOS_INSTANCE } from '@/lib/api-client';
 
 interface AuthState {
   user: UserResponse | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
+  signup: (
+    email: string,
+    password: string,
+    name: string,
+    affiliation?: SignUpRequestAffiliation,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
   setUser: (user: UserResponse | null) => void;
@@ -59,9 +64,14 @@ export const useAuth = create<AuthState>()((set) => ({
     }
   },
 
-  signup: async (email, password, name) => {
+  signup: async (email, password, name, affiliation) => {
     try {
-      const response = await postApiAuthSignup({ email, password, name });
+      const response = await postApiAuthSignup({
+        email,
+        password,
+        name,
+        affiliation: affiliation || undefined,
+      });
       // バックエンドがCookieを設定するが、3rd-party cookieブロック対策としてlocalStorageにも保存
       if (response.token) {
         localStorage.setItem('auth_token', response.token);

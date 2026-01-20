@@ -243,6 +243,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/auth/logout": {
+            "post": {
+                "description": "クッキーを削除してログアウトします。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "認証 (Auth)"
+                ],
+                "summary": "ログアウト (Logout)",
+                "responses": {
+                    "200": {
+                        "description": "ログアウト成功",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/me": {
             "get": {
                 "description": "Cookieからトークンを読み取り、現在ログイン中のユーザー情報を返します。",
@@ -314,6 +337,62 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "サーバー内部でエラーが発生しました",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "指定されたIDのユーザー公開プロフィール（名前、所属、アイコン、記事一覧）を取得します。未認証でもアクセス可能ですが、外部公開記事のみ表示されます。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "ユーザー詳細取得",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ポートフォリオキー（内部公開記事も表示する場合に必要）",
+                        "name": "portfolio_key",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UserDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
                         }
@@ -493,11 +572,11 @@ const docTemplate = `{
                 "department": {
                     "type": "string",
                     "enum": [
-                        "Dev",
-                        "MKT",
-                        "Ops"
+                        "開発",
+                        "マーケティング",
+                        "組織管理"
                     ],
-                    "example": "Dev"
+                    "example": "開発"
                 },
                 "status": {
                     "type": "string",
@@ -535,6 +614,15 @@ const docTemplate = `{
                 "password"
             ],
             "properties": {
+                "affiliation": {
+                    "type": "string",
+                    "enum": [
+                        "開発",
+                        "マーケティング",
+                        "組織管理"
+                    ],
+                    "example": "開発"
+                },
                 "email": {
                     "type": "string",
                     "example": "user@example.com"
@@ -547,6 +635,41 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 8,
                     "example": "password123"
+                }
+            }
+        },
+        "UserDetailResponse": {
+            "type": "object",
+            "properties": {
+                "affiliation": {
+                    "type": "string",
+                    "example": "Dev"
+                },
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ArticleResponse"
+                    }
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-01T12:00:00Z"
+                },
+                "icon_url": {
+                    "type": "string",
+                    "example": "https://example.com/icon.jpg"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "山田太郎"
+                },
+                "portfolio_key": {
+                    "type": "string",
+                    "example": "abc123xyz"
                 }
             }
         },

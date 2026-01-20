@@ -7,11 +7,11 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateExternalArticleRequestDepartment =
-  (typeof CreateExternalArticleRequestDepartment)[keyof typeof CreateExternalArticleRequestDepartment];
+export type SignUpRequestAffiliation =
+  (typeof SignUpRequestAffiliation)[keyof typeof SignUpRequestAffiliation];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateExternalArticleRequestDepartment = {
+export const SignUpRequestAffiliation = {
   開発: '開発',
   マーケティング: 'マーケティング',
   組織管理: '組織管理',
