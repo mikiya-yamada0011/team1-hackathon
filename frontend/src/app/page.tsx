@@ -2,6 +2,7 @@
 
 import { Search } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -126,55 +127,57 @@ function ArticleCard({
   formatDate: (date?: string) => string;
 }) {
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 border-none shadow-sm bg-white flex flex-col h-full overflow-hidden">
-      {/* Thumbnail Image */}
-      <div className="relative w-full aspect-video overflow-hidden bg-slate-100">
-        {article.thumbnail_url ? (
-          <Image
-            src={article.thumbnail_url}
-            alt={article.title || 'Article thumbnail'}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            No Image
-          </div>
-        )}
-      </div>
-
-      <CardHeader className="pb-2 pt-4 px-5 space-y-0">
-        <div className="flex justify-between items-start w-full mb-2">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6 border border-slate-100">
-              <AvatarImage src={article.author?.icon_url} alt={article.author?.name} />
-              <AvatarFallback className="text-[10px]">
-                {article.author?.name?.slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-xs font-medium text-slate-600">{article.author?.name}</span>
-          </div>
-          <span className="text-xs text-slate-400">{formatDate(article.created_at)}</span>
+    <Link href={`/detail/${article.slug}`}>
+      <Card className="group hover:shadow-xl transition-all duration-300 border-none shadow-sm bg-white flex flex-col h-full overflow-hidden cursor-pointer">
+        {/* Thumbnail Image */}
+        <div className="relative w-full aspect-video overflow-hidden bg-slate-100">
+          {article.thumbnail_url ? (
+            <Image
+              src={article.thumbnail_url}
+              alt={article.title || 'Article thumbnail'}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+              No Image
+            </div>
+          )}
         </div>
-      </CardHeader>
 
-      <CardContent className="flex-grow py-0 px-5">
-        <h3 className="text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2 text-slate-800">
-          {article.title}
-        </h3>
-      </CardContent>
+        <CardHeader className="pb-2 pt-4 px-5 space-y-0">
+          <div className="flex justify-between items-start w-full mb-2">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6 border border-slate-100">
+                <AvatarImage src={article.author?.icon_url} alt={article.author?.name} />
+                <AvatarFallback className="text-[10px]">
+                  {article.author?.name?.slice(0, 2)}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-xs font-medium text-slate-600">{article.author?.name}</span>
+            </div>
+            <span className="text-xs text-slate-400">{formatDate(article.created_at)}</span>
+          </div>
+        </CardHeader>
 
-      <CardFooter className="pt-2 pb-4 px-5 text-xs text-muted-foreground flex justify-between items-center mt-auto">
-        <Badge
-          variant="outline"
-          className="text-[10px] font-normal border-slate-200 text-slate-500"
-        >
-          {article.article_type}
-        </Badge>
-        {article.external_url && (
-          <span className="text-primary flex items-center gap-1 font-medium">External Link</span>
-        )}
-      </CardFooter>
-    </Card>
+        <CardContent className="flex-grow py-0 px-5">
+          <h3 className="text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2 text-slate-800">
+            {article.title}
+          </h3>
+        </CardContent>
+
+        <CardFooter className="pt-2 pb-4 px-5 text-xs text-muted-foreground flex justify-between items-center mt-auto">
+          <Badge
+            variant="outline"
+            className="text-[10px] font-normal border-slate-200 text-slate-500"
+          >
+            {article.article_type}
+          </Badge>
+          {article.external_url && (
+            <span className="text-primary flex items-center gap-1 font-medium">External Link</span>
+          )}
+        </CardFooter>
+      </Card>
+    </Link>
   );
 }

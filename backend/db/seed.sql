@@ -85,7 +85,7 @@ INSERT INTO articles (author_id, article_type, title, content, slug, department,
 ON CONFLICT (slug) DO NOTHING;
 
 -- 外部記事のURLを設定
-UPDATE articles 
+UPDATE articles
 SET external_url = 'https://www.typescriptlang.org/docs/'
 WHERE slug = 'typescript-official-docs';
 
