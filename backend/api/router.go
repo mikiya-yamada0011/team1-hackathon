@@ -41,7 +41,8 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 
 	//UserControllerを作成
 	userRepo := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepo)
+	articleRepo := repositories.NewArticleRepository(db)
+	userService := services.NewUserService(userRepo, articleRepo)
 	userController := controller.NewUserController(userService)
 	// APIルート
 	api := router.Group("/api")
@@ -63,8 +64,8 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *echo.Echo {
 			articles.GET("/:slug", articleController.GetArticleBySlug)
 		}
 
-		//ユーザー関連
-		users := api.Group("/users")
+		//ユーザー関連（未認証でもアクセス可能、OptionalAuthで認証状態を取得）
+		users := api.Group("/users", OptionalAuthMiddleware(cfg.SecretKey))
 		{
 			users.GET("/:id", userController.GetUserDetailHandler)
 		}

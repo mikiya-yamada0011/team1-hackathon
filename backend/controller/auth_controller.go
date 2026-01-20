@@ -59,6 +59,15 @@ func (c *AuthController) SignUpHandler(ctx echo.Context) error {
 		})
 	}
 
+	if req.Affiliation != nil {
+		affiliation := *req.Affiliation
+		if affiliation != "開発" && affiliation != "マーケティング" && affiliation != "組織管理" {
+			return ctx.JSON(http.StatusBadRequest, models.ErrorResponse{
+				Error: "所属は開発、マーケティング、組織管理のいずれかである必要があります",
+			})
+		}
+	}
+
 	userRes, tokenString, err := c.service.SignUp(ctx.Request().Context(), req)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
