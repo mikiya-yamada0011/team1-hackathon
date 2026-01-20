@@ -1,5 +1,8 @@
 server:
   port: 8080
+  environment: development
+
+secretKey: "your-secret-key-for-development"
 
 database:
   port: "5432"
