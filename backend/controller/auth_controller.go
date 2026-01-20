@@ -77,7 +77,8 @@ func (c *AuthController) SignUpHandler(ctx echo.Context) error {
 		Name:     "token",
 		Value:    tokenString,
 		Path:     "/",
-		MaxAge:   259200, // 72時間
+		Domain:   c.config.Server.CookieDomain, // クロスドメインでのクッキー共有用
+		MaxAge:   259200,                       // 72時間
 		HttpOnly: true,
 		Secure:   isProduction, // 本番環境ではtrue
 		SameSite: http.SameSiteLaxMode,
@@ -138,7 +139,8 @@ func (c *AuthController) LogInHandler(ctx echo.Context) error {
 		Name:     "token",
 		Value:    tokenString,
 		Path:     "/",
-		MaxAge:   259200, // 72時間
+		Domain:   c.config.Server.CookieDomain, // クロスドメインでのクッキー共有用
+		MaxAge:   259200,                       // 72時間
 		HttpOnly: true,
 		Secure:   isProduction, // 本番環境ではtrue
 		SameSite: http.SameSiteLaxMode,
