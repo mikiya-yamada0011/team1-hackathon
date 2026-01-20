@@ -13,7 +13,7 @@ INSERT INTO users (id, name, email, affiliation, password_hash, icon_url) VALUES
 (6, '伊藤 愛', 'ito@example.com', '組織管理', '$2a$10$dummyhash6666666666666666666666666666666666666666', 'https://i.pravatar.cc/150?img=6'),
 (7, '渡辺 大輔', 'watanabe@example.com', '開発', '$2a$10$dummyhash7777777777777777777777777777777777777777', 'https://i.pravatar.cc/150?img=7'),
 (8, '小林 陽子', 'kobayashi@example.com', 'マーケティング', '$2a$10$dummyhash8888888888888888888888888888888888888888', 'https://i.pravatar.cc/150?img=8'),
-(9, 'みきや', 'mikiya@example.com', '開発', '$2a$10$Z.INna39d0l2JmolNoMdKeFTlOsFkLTBa4buqXr040byW.NdY9aOm', 'https://i.pravatar.cc/150?img=9');
+(9, 'みきや', 'a@a.com', '開発', '$2a$10$Z.INna39d0l2JmolNoMdKeFTlOsFkLTBa4buqXr040byW.NdY9aOm', 'https://i.pravatar.cc/150?img=9');
 -- パスワードは "aaaaaaaa" (bcrypt hash)
 
 -- ユーザーIDシーケンスをリセット

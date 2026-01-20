@@ -4,7 +4,7 @@ import { ArrowLeft, Building2, Calendar, Lock, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { use } from 'react';
+import { use, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,7 @@ export default function UserPage({ params }: UserPageProps) {
     portfolioKey,
   });
   const { isAuthenticated, user: authUser } = useAuth();
+  const [copied, setCopied] = useState(false);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
@@ -41,19 +42,19 @@ export default function UserPage({ params }: UserPageProps) {
   };
 
   // ポートフォリオリンクをコピー
-  const copyPortfolioLink = () => {
+  const copyPortfolioLink = async () => {
     if (!user?.portfolio_key) {
       // portfolio_keyがない場合はダミーキーで生成（バックエンドで検証されるため問題なし）
       const url = `${window.location.origin}/users/${userId}?portfolio_key=PLACEHOLDER`;
-      navigator.clipboard.writeText(url);
-      alert(
-        'ポートフォリオリンクをコピーしました！\n注意: データベースにポートフォリオキーが設定されていない可能性があります。',
-      );
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
       return;
     }
     const url = `${window.location.origin}/users/${userId}?portfolio_key=${user.portfolio_key}`;
-    navigator.clipboard.writeText(url);
-    alert('ポートフォリオリンクをコピーしました！');
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   // 認証状態またはportfolio_keyに応じて記事をフィルタリング
@@ -165,7 +166,7 @@ export default function UserPage({ params }: UserPageProps) {
                       className="text-xs"
                     >
                       <Share2 className="h-3 w-3 mr-1" />
-                      ポートフォリオリンクをコピー
+                      {copied ? 'コピーしました！' : 'ポートフォリオリンクをコピー'}
                     </Button>
                   )}
                 </div>
