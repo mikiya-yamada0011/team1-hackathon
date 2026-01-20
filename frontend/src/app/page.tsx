@@ -82,7 +82,7 @@ export default function Home() {
         <Image src="/header.png" alt="Header Image" fill className="object-cover" priority />
       </div>
 
-      <div className="container mx-auto px-0.5 md:px-4 py-1 md:py-12 max-w-[1600px]">
+      <div className="container mx-auto px-0.5 md:px-4 py-3 md:py-12 max-w-[1600px]">
         {/* Info Cards Section */}
         <div className="grid grid-cols-2 gap-0.5 md:gap-2 mb-1 md:mb-6">
           <Link
